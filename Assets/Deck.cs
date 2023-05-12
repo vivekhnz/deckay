@@ -6,12 +6,13 @@ using System.Collections.Generic;
 class CardData
 {
     public int Health;
+    public string effectText;
 }
 
 internal class Deck
 {
     private readonly Random rng;
-    public List<Card> cardList = new List<Card>();
+    public List<CardData> cardList = new List<CardData>();
     public Deck()
     {
 
