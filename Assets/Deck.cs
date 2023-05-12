@@ -1,27 +1,30 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace Assets
+
+class CardData
 {
-    class CardData
+    public int Health;
+}
+
+internal class Deck
+{
+    private readonly Random rng;
+    public List<Card> cardList = new List<Card>();
+    public Deck()
     {
-        public int Health;
+
+
+        rng = new Random();
     }
 
-    internal class Deck
+    public CardData GetNextCard()
     {
-        private readonly Random rng;
-
-        public Deck()
+        return new CardData
         {
-            rng = new Random();
-        }
-
-        public CardData GetNextCard()
-        {
-            return new CardData
-            {
-                Health = rng.Next(3, 7)
-            };
-        }
+            Health = rng.Next(3, 7)
+        };
     }
 }
+
