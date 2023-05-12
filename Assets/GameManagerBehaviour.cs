@@ -1,3 +1,4 @@
+using Assets;
 using UnityEngine;
 
 public class GameManagerBehaviour : MonoBehaviour
@@ -8,17 +9,24 @@ public class GameManagerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        var deck = new Deck();
         for (int i = 0; i < 5; i++)
         {
-            var card = Instantiate(cardPrefab);
-            card.transform.SetParent(rootCanvas, false);
-            
-            var transform = card.GetComponent<RectTransform>();
-            transform.anchoredPosition = new Vector2(i * 75, 0);
-
-            var cardData = card.GetComponent<CardBehaviour>();
-            cardData.health = Random.Range(3, 7);
+            DealCard(deck, new Vector2(i * 75, 0));
         }
+    }
+
+    private void DealCard(Deck deck, Vector2 position)
+    {
+        var cardObj = Instantiate(cardPrefab);
+        cardObj.transform.SetParent(rootCanvas, false);
+
+        var transform = cardObj.GetComponent<RectTransform>();
+        transform.anchoredPosition = position;
+
+        var card = cardObj.GetComponent<CardBehaviour>();
+        var cardData = deck.GetNextCard();
+        card.health = cardData.Health;
     }
 
     // Update is called once per frame
