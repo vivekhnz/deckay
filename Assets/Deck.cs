@@ -13,9 +13,26 @@ internal class Deck
 {
     private readonly Random rng;
     public List<CardData> cardList = new List<CardData>();
+    private int deckSize = 50;
     public Deck()
     {
         rng = new Random();
+    }
+
+    public void shuffle()
+    {
+        for(int i = 0; i < deckSize; i++)
+        {
+            CardData temp = cardList[i];
+            int randomIndex = rng.Next(i, deckSize);
+            cardList[i] = cardList[randomIndex];
+            cardList[randomIndex] = temp;
+        }
+    }
+
+    public void fillDeck()
+    {
+
     }
 
     public CardData GetNextCard() // have player hand collection as argument
