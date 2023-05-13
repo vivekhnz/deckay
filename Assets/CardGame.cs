@@ -102,6 +102,21 @@ internal class CardGame
                 PickUpCard(Actor.Opponent);
                 break;
         }
+
+        // remove expired cards
+        var actors = new[] { Player, Opponent };
+        foreach (var actor in actors)
+        {
+            for (int i = 0; i < actor.CardsInHand.Count; i++)
+            {
+                var card = actor.CardsInHand[i];
+                if (card.Health <= 0)
+                {
+                    actor.CardsInHand.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
     }
 
     internal void DealCards(int cardsPerHand)
@@ -151,25 +166,13 @@ internal class CardGame
         actorState.CardsInHand.Remove(card);
     }
 
-    /// <returns>Cards that decayed to zero health.</returns>
-    internal List<CardData> DecayCards(Actor actor)
+    internal void DecayCards(Actor actor)
     {
         var actorState = GetActorState(actor);
-
-        var removedCards = new List<CardData>();
-        for (int i = 0; i < actorState.CardsInHand.Count; i++)
+        foreach (var card in actorState.CardsInHand)
         {
-            var card = actorState.CardsInHand[i];
             card.Health--;
-            if (card.Health <= 0)
-            {
-                removedCards.Add(card);
-                actorState.CardsInHand.RemoveAt(i);
-                i--;
-            }
         }
-
-        return removedCards;
     }
 
     internal void Execute(Actor user)
