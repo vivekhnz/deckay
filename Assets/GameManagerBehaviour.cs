@@ -22,6 +22,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public Text currentPhaseText;
 
     private int handSize = 5;
+    private int handOffset = 50;
     private Deck deck;
     private GamePhase currentPhase;
     private List<CardBehaviour> playerHand = new List<CardBehaviour>();
@@ -77,11 +78,11 @@ public class GameManagerBehaviour : MonoBehaviour
 
                     if (i % 2 == 1)
                     {
-                        card = DealCard(deck, new Vector2(((i * 50) + 50), 0), playerDeal);
+                        card = DealCard(deck, new Vector2(((i * handOffset) + handOffset), 0), playerDeal);
                     }
                     else
                     {
-                        card = DealCard(deck, new Vector2(i * -50, 0), playerDeal);
+                        card = DealCard(deck, new Vector2(i * -handOffset, 0), playerDeal);
                     }
                     playerHand.Add(card);
                 }
@@ -94,11 +95,11 @@ public class GameManagerBehaviour : MonoBehaviour
 
                     if (i % 2 == 1)
                     {
-                        card = DealCard(deck, new Vector2(((i * 50) + 50), 0), playerDeal);
+                        card = DealCard(deck, new Vector2(((i * handOffset) + handOffset), 0), playerDeal);
                     }
                     else
                     {
-                        card = DealCard(deck, new Vector2(i * -50, 0), playerDeal);
+                        card = DealCard(deck, new Vector2(i * -handOffset, 0), playerDeal);
                     }
                     opponentHand.Add(card);
                 }
@@ -141,7 +142,19 @@ public class GameManagerBehaviour : MonoBehaviour
                     {
                         playerHand.Remove(card);
                         Destroy(card.gameObject);
+                        //adjustHand(playerHand, true);
                     }
+
+                    // pick up new card to player hand
+                    int currentHandSize = playerHand.Count;
+                    if (currentHandSize % 2 == 1)
+                    {
+                        playerHand.Add(DealCard(deck, new Vector2(((currentHandSize * handOffset) + handOffset), 0), true));
+                    }
+                    else
+                    {
+                        playerHand.Add(DealCard(deck, new Vector2(currentHandSize * -handOffset, 0), true));
+                    }         
 
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
@@ -175,6 +188,18 @@ public class GameManagerBehaviour : MonoBehaviour
                     {
                         opponentHand.Remove(card);
                         Destroy(card.gameObject);
+                        //adjustHand(opponentHand, false);
+                    }
+
+                    // pick up new card to ai hand
+                    int opponentHandSize = opponentHand.Count;
+                    if (opponentHandSize % 2 == 1)
+                    {
+                        opponentHand.Add(DealCard(deck, new Vector2(((opponentHandSize * handOffset) + handOffset), 0), false));
+                    }
+                    else
+                    {
+                        opponentHand.Add(DealCard(deck, new Vector2(opponentHandSize * -handOffset, 0), false));
                     }
 
                     Invoke(nameof(MoveToNextPhase), 1.0f);
@@ -186,7 +211,7 @@ public class GameManagerBehaviour : MonoBehaviour
     private CardBehaviour DealCard(Deck deck, Vector2 position, bool playerDeal)
     {
         var cardObj = Instantiate(cardPrefab);
-
+        
         if (playerDeal)
         {
             cardObj.transform.SetParent(playerHandPanel, false);
@@ -212,6 +237,24 @@ public class GameManagerBehaviour : MonoBehaviour
         });
 
         return card;
+    }
+
+    private void adjustHand(List<CardBehaviour> hand, bool playerTurn)
+    {
+        for (int i=0; i<hand.Count; i++)
+        {
+            var card = hand[i];
+            var transform = card.gameObject.GetComponent<RectTransform>();
+
+            if (i % 2 == 1)
+            {
+                transform.anchoredPosition = new Vector2(((i * handOffset) + handOffset), 0);
+            }
+            else
+            {
+                transform.anchoredPosition = new Vector2(i * -handOffset, 0);
+            }
+        }
     }
 
     private void ExecuteCard(CardBehaviour card, bool isPlayerCard)
