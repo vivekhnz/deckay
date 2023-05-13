@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,8 @@ public class GameManagerBehaviour : MonoBehaviour
 
     private Deck deck;
     private GamePhase currentPhase;
+    private List<CardBehaviour> playerHand = new List<CardBehaviour>();
+    private List<CardBehaviour> opponentHand = new List<CardBehaviour>();
 
     // Start is called before the first frame update
     void Start()
@@ -50,18 +53,25 @@ public class GameManagerBehaviour : MonoBehaviour
             case GamePhase.Dealing:
                 deck = new Deck();
 
+                playerHand.Clear();
+
                 // replace for loop with card count possibly. 
                 for (int i = 0; i < 5; i++)
                 {
+                    CardBehaviour card;
+                    
                     if (i % 2 == 1)
                     {
-                        DealCard(deck, new Vector2(((i * 50) + 50), 0));
+                        card = DealCard(deck, new Vector2(((i * 50) + 50), 0));
                     }
                     else
                     {
-                        DealCard(deck, new Vector2(i * -50, 0));
-                    } 
+                        card = DealCard(deck, new Vector2(i * -50, 0));
+                    }
+                    playerHand.Add(card);
                 }
+
+                // todo: deal opponent's hand
                 break;
 
             case GamePhase.PlayerChoose:
@@ -82,11 +92,21 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.Decay:
                 // todo: decay all cards in hand
+
+                foreach (var card in playerHand)
+                {
+                    card.data.Health--;
+                }
+                foreach (var card in opponentHand)
+                {
+                    card.data.Health--;
+                }
+
                 break;
         }
     }
 
-    private void DealCard(Deck deck, Vector2 position)
+    private CardBehaviour DealCard(Deck deck, Vector2 position)
     {
         var cardObj = Instantiate(cardPrefab);
         cardObj.transform.SetParent(playerHandPanel, false);
@@ -96,6 +116,8 @@ public class GameManagerBehaviour : MonoBehaviour
 
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = deck.GetNextCard();
+
+        return card;
     }
 
     // Update is called once per frame
