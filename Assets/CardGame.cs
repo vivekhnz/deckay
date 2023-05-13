@@ -102,6 +102,65 @@ internal class CardGame
         return removedCards;
     }
 
+    internal void Execute(Actor user)
+    {
+        ActorState me;
+        ActorState opponent;
+        switch (user)
+        {
+            case Actor.Player:
+                me = Player;
+                opponent = Opponent;
+                break;
+            case Actor.Opponent:
+                me = Opponent;
+                opponent = Player;
+                break;
+            default:
+                throw new NotImplementedException();
+        }
+
+        // ensure that cards are always face up when executing
+        var executingCard = me.SelectedCard;
+        executingCard.IsFaceDown = false;
+        ExecuteCard(executingCard, me, opponent);
+    }
+
+    private void ExecuteCard(CardData card, ActorState me, ActorState opponent)
+    {
+        // todo: update actor states according to card's effect
+        Debug.Log($"Executing card effect '{card.Effect}'");
+        switch (card.Effect)
+        {
+            case CardAction.DoubleTurn:
+                break;
+            case CardAction.Discard:
+                break;
+            case CardAction.ExtraTurn:
+                break;
+            case CardAction.Blind:
+                break;
+            case CardAction.Steal:
+                break;
+            case CardAction.LifeDrain:
+                break;
+            case CardAction.Agro:
+                break;
+            case CardAction.TakeLifeForce:
+                break;
+            case CardAction.Draw:
+                break;
+            case CardAction.LifeSteal:
+                break;
+            case CardAction.Skip:
+                break;
+            case CardAction.Refurbish:
+                break;
+            case CardAction.WildCard:
+                break;
+        }
+    }
+
     private ActorState GetActorState(Actor actor)
     {
         switch (actor)

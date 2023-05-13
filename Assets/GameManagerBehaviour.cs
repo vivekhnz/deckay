@@ -90,6 +90,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     CreateOpponentCardObject(card);
                 }
 
+                // todo: start deal animation
                 Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
@@ -98,7 +99,9 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.PlayerExecute:
-                ExecuteCard(game.Player.SelectedCard, true);
+                game.Execute(Actor.Player);
+
+                // todo: start execute animation
                 Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
@@ -114,6 +117,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     var cardData = game.PickUpCard(Actor.Player);
                     CreatePlayerCardObject(cardData);
 
+                    // todo: start decay animation
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
@@ -127,8 +131,9 @@ public class GameManagerBehaviour : MonoBehaviour
                 game.ChooseCard(Actor.Opponent, selectedCard);
                 Destroy(cardObjByData[selectedCard].gameObject);
 
-                ExecuteCard(game.Opponent.SelectedCard, false);
+                game.Execute(Actor.Opponent);
 
+                // todo: start execute animation
                 Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
@@ -144,6 +149,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     var cardData = game.PickUpCard(Actor.Opponent);
                     CreateOpponentCardObject(cardData);
 
+                    // todo: start decay animation
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
@@ -172,15 +178,6 @@ public class GameManagerBehaviour : MonoBehaviour
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = cardData;
         cardObjByData[cardData] = card;
-    }
-
-    private void ExecuteCard(CardData card, bool isPlayerCard)
-    {
-        card.IsFaceDown = false;
-
-        // todo: execute card's effect
-
-        // todo: run animation for the player's chosen card
     }
 
     // Update is called once per frame
