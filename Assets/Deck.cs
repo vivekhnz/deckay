@@ -16,7 +16,7 @@ class CardData
 internal class Deck
 {
     private readonly Random rng;
-    public List<CardData> cardList = new List<CardData>();
+    public List<CardData> cardList;
     private int deckSize = 50;
     private int topOfDeck = 0;
     public Deck()
@@ -39,6 +39,7 @@ internal class Deck
 
     public void fillDeck()
     {
+        cardList = new List<CardData>();
         for(int i = 0; i < deckSize; i++)
         {
             if (i < deckSize - 40)
@@ -62,15 +63,12 @@ internal class Deck
     public CardData GetNextCard() // have player hand collection as argument
     {
         // if deck stack is empty call reshuffle
-
-        // else, pop card off top of deck stack
-
-        // add popped card, into current player hand
-
-        // return new CardData
-        // {
-        //     Health = rng.Next(3, 7)
-        // };
+        if(topOfDeck == deckSize)
+        {
+            topOfDeck = 0;
+            fillDeck();
+            shuffle();
+        }
         topOfDeck++;
         return cardList[topOfDeck - 1];
     }
