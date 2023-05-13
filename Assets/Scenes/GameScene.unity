@@ -475,6 +475,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 2464230670915485181, guid: 66a32b911ab69a246ab304bec1c6a82e, type: 3}
   rootCanvas: {fileID: 1863821866}
   playerHandPanel: {fileID: 540894004}
+  opponentHandPanel: {fileID: 1770503893}
   currentPhaseText: {fileID: 367284812}
 --- !u!4 &1238300173
 Transform:

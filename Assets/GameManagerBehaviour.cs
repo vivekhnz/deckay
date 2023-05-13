@@ -17,6 +17,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public GameObject cardPrefab;
     public Transform rootCanvas;
     public Transform playerHandPanel;
+    public Transform opponentHandPanel;
     public Text currentPhaseText;
 
     private int handSize = 5;
@@ -65,6 +66,8 @@ public class GameManagerBehaviour : MonoBehaviour
 
                 playerHand.Clear();
 
+                bool playerDeal = true;
+
                 // replace for loop with card count possibly. 
                 for (int i = 0; i < handSize; i++)
                 {
@@ -72,15 +75,31 @@ public class GameManagerBehaviour : MonoBehaviour
                     
                     if (i % 2 == 1)
                     {
-                        card = DealCard(deck, new Vector2(((i * 50) + 50), 0));
+                        card = DealCard(deck, new Vector2(((i * 50) + 50), 0), playerDeal);
                     }
                     else
                     {
-                        card = DealCard(deck, new Vector2(i * -50, 0));
+                        card = DealCard(deck, new Vector2(i * -50, 0), playerDeal);
                     }
                     playerHand.Add(card);
                 }
 
+                playerDeal = false;
+
+                for (int i = 0; i < handSize; i++)
+                {
+                    CardBehaviour card;
+
+                    if (i % 2 == 1)
+                    {
+                        card = DealCard(deck, new Vector2(((i * 50) + 50), 0), playerDeal);
+                    }
+                    else
+                    {
+                        card = DealCard(deck, new Vector2(i * -50, 0), playerDeal);
+                    }
+                    opponentHand.Add(card);
+                }
                 // todo: deal opponent's hand
                 break;
 
@@ -126,12 +145,18 @@ public class GameManagerBehaviour : MonoBehaviour
         }
     }
 
-    private CardBehaviour DealCard(Deck deck, Vector2 position)
+    private CardBehaviour DealCard(Deck deck, Vector2 position, bool playerDeal)
     {
         var cardObj = Instantiate(cardPrefab);
-        
-        // if opponent set as opponent panel 
-        cardObj.transform.SetParent(playerHandPanel, false);
+
+        if (playerDeal)
+        {
+            cardObj.transform.SetParent(playerHandPanel, false);
+        }
+        else
+        {
+            cardObj.transform.SetParent(opponentHandPanel, false);
+        }
 
         var transform = cardObj.GetComponent<RectTransform>();
         transform.anchoredPosition = position;
