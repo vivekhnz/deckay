@@ -23,6 +23,8 @@ public class GameManagerBehaviour : MonoBehaviour
     private GamePhase currentPhase;
     private List<CardBehaviour> playerHand = new List<CardBehaviour>();
     private List<CardBehaviour> opponentHand = new List<CardBehaviour>();
+    private CardBehaviour playerChosenCard = null;
+    private CardBehaviour opponentChosenCard = null;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +45,11 @@ public class GameManagerBehaviour : MonoBehaviour
         }
 
         BeginPhase(currentPhase);
+    }
+
+    public void ChooseCardFromPlayerHand(CardBehaviour card)
+    {
+        playerChosenCard = card;
     }
 
     void BeginPhase(GamePhase phase)
@@ -76,23 +83,23 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.PlayerChoose:
                 // todo: allow player to choose a card from their hand
+                playerChosenCard = playerHand[0];
                 break;
 
             case GamePhase.PlayerExecute:
-                // todo: run animation for the player's chosen card
+                ExecuteCard(playerChosenCard, true);
                 break;
 
             case GamePhase.AiChoose:
                 // todo: AI picks a card from their hand
+                opponentChosenCard = opponentHand[0];
                 break;
 
             case GamePhase.AiExecute:
-                // todo: run animation for the AI's chosen card
+                ExecuteCard(opponentChosenCard, false);
                 break;
 
             case GamePhase.Decay:
-                // todo: decay all cards in hand
-
                 foreach (var card in playerHand)
                 {
                     card.data.Health--;
@@ -101,6 +108,8 @@ public class GameManagerBehaviour : MonoBehaviour
                 {
                     card.data.Health--;
                 }
+
+                // todo: discard cards that have reached 0 health
 
                 break;
         }
@@ -121,6 +130,19 @@ public class GameManagerBehaviour : MonoBehaviour
         card.data = deck.GetNextCard();
 
         return card;
+    }
+
+    private void ExecuteCard(CardBehaviour card, bool isPlayerCard)
+    {
+        // todo: execute card's effect
+        // todo: run animation for the player's chosen card
+
+        DiscardCard(card);
+    }
+
+    private void DiscardCard(CardBehaviour card)
+    {
+        // todo: discard card
     }
 
     // Update is called once per frame
