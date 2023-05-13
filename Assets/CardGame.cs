@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 public enum Actor
 {
@@ -24,12 +25,16 @@ internal class CardGame
 {
     private Deck deck;
 
+
+    private readonly Random rng;
+
     public ActorState Player;
     public ActorState Opponent;
 
     public CardGame()
 	{
-		deck = new Deck();
+        rng = new Random();
+        deck = new Deck();
         Player = new ActorState();
         Opponent = new ActorState();
     }
@@ -151,12 +156,16 @@ internal class CardGame
             case CardAction.Draw:
                 break;
             case CardAction.LifeSteal:
+                me.CardsInHand[0].Health += 1;
+                opponent.CardsInHand[0].Health -= 1;
                 break;
             case CardAction.Skip:
                 break;
             case CardAction.Refurbish:
+                me.CardsInHand[0].Health += 2;
                 break;
             case CardAction.WildCard:
+                int roll = rng.Next(1, 7);
                 break;
         }
     }
