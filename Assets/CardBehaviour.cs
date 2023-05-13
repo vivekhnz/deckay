@@ -38,16 +38,7 @@ public class CardBehaviour : MonoBehaviour
     {
         if (isClickable == true)
         {
-            var transform = this.GetComponent<RectTransform>();
-            transform.anchoredPosition += Vector2.up * 20;
-            isClickable = false;
-            Invoke("Discard", 2f);
             onClickAction.Invoke();
         }
-    }
-
-    void Discard()
-    {
-        Destroy(gameObject);
     }
 }

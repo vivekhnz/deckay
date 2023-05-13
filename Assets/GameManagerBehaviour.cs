@@ -20,6 +20,8 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform playerHandPanel;
     public Transform opponentHandPanel;
     public Text currentPhaseText;
+    public Text executingPlayerText;
+    public CardBehaviour executingCard;
 
     private int handSize = 5;
     private int handOffset = 50;
@@ -27,8 +29,8 @@ public class GameManagerBehaviour : MonoBehaviour
     private GamePhase currentPhase;
     private List<CardBehaviour> playerHand = new List<CardBehaviour>();
     private List<CardBehaviour> opponentHand = new List<CardBehaviour>();
-    private CardBehaviour playerChosenCard = null;
-    private CardBehaviour opponentChosenCard = null;
+    private CardData playerChosenCard = null;
+    private CardData opponentChosenCard = null;
 
     // Start is called before the first frame update
     void Start()
@@ -54,8 +56,9 @@ public class GameManagerBehaviour : MonoBehaviour
     public void ChooseCardFromPlayerHand(CardBehaviour card)
     {
         Debug.Log("Was Clicked" + card.data.Health);
-        playerChosenCard = card;
+        playerChosenCard = card.data;
         playerHand.Remove(card);
+        Destroy(card.gameObject);
         MoveToNextPhase();
     }
 
@@ -66,6 +69,9 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             case GamePhase.Dealing:
                 deck = new Deck();
+
+                executingPlayerText.gameObject.SetActive(false);
+                executingCard.gameObject.SetActive(false);
 
                 playerHand.Clear();
 
@@ -109,12 +115,11 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.PlayerChoose:
-                // todo: allow player to choose a card from their hand
+                // allow player to choose a card from their hand
                 foreach (var card in playerHand)
                 {
                     card.isClickable = true;
                 }
-                playerChosenCard = playerHand[0];
                 break;
 
             case GamePhase.PlayerExecute:
@@ -124,11 +129,14 @@ public class GameManagerBehaviour : MonoBehaviour
                     card.isClickable = false;
                 }
 
-                Invoke(nameof(MoveToNextPhase), 1.0f);
+                Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
             case GamePhase.PlayerDecay:
                 {
+                    executingPlayerText.gameObject.SetActive(false);
+                    executingCard.gameObject.SetActive(false);
+
                     var toRemove = new List<CardBehaviour>();
                     foreach (var card in playerHand)
                     {
@@ -154,7 +162,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     else
                     {
                         playerHand.Add(DealCard(deck, new Vector2(currentHandSize * -handOffset, 0), true));
-                    }         
+                    }
 
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
@@ -162,7 +170,10 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.AiChoose:
                 // todo: AI picks a card from their hand
-                opponentChosenCard = opponentHand[0];
+                var chosenCard = opponentHand[0];
+                opponentHand.RemoveAt(0);
+                opponentChosenCard = chosenCard.data;
+                Destroy(chosenCard.gameObject);
 
                 Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
@@ -170,11 +181,14 @@ public class GameManagerBehaviour : MonoBehaviour
             case GamePhase.AiExecute:
                 ExecuteCard(opponentChosenCard, false);
 
-                Invoke(nameof(MoveToNextPhase), 1.0f);
+                Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
             case GamePhase.AiDecay:
                 {
+                    executingPlayerText.gameObject.SetActive(false);
+                    executingCard.gameObject.SetActive(false);
+
                     var toRemove = new List<CardBehaviour>();
                     foreach (var card in opponentHand)
                     {
@@ -211,7 +225,7 @@ public class GameManagerBehaviour : MonoBehaviour
     private CardBehaviour DealCard(Deck deck, Vector2 position, bool playerDeal)
     {
         var cardObj = Instantiate(cardPrefab);
-        
+
         if (playerDeal)
         {
             cardObj.transform.SetParent(playerHandPanel, false);
@@ -241,7 +255,7 @@ public class GameManagerBehaviour : MonoBehaviour
 
     private void adjustHand(List<CardBehaviour> hand, bool playerTurn)
     {
-        for (int i=0; i<hand.Count; i++)
+        for (int i = 0; i < hand.Count; i++)
         {
             var card = hand[i];
             var transform = card.gameObject.GetComponent<RectTransform>();
@@ -257,15 +271,20 @@ public class GameManagerBehaviour : MonoBehaviour
         }
     }
 
-    private void ExecuteCard(CardBehaviour card, bool isPlayerCard)
+    private void ExecuteCard(CardData card, bool isPlayerCard)
     {
         // todo: execute card's effect
+        executingPlayerText.text = $"{(isPlayerCard ? "You" : "Opponent")} played";
+        executingCard.data = card;
+        executingPlayerText.gameObject.SetActive(true);
+        executingCard.gameObject.SetActive(true);
+
         // todo: run animation for the player's chosen card
 
         DiscardCard(card);
     }
 
-    private void DiscardCard(CardBehaviour card)
+    private void DiscardCard(CardData card)
     {
         // todo: discard card
     }
