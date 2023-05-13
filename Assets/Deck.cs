@@ -5,12 +5,10 @@ using UnityEngine;
 using Random = System.Random;
 
 
-class CardData
+public class CardData
 {
     public int Health;
     public string Effect;
-
-
 }
 
 internal class Deck

@@ -86,9 +86,7 @@ public class GameManagerBehaviour : MonoBehaviour
         transform.anchoredPosition = position;
 
         var card = cardObj.GetComponent<CardBehaviour>();
-        var cardData = deck.GetNextCard();
-        card.health = cardData.Health;
-        card.effect = cardData.Effect;
+        card.data = deck.GetNextCard();
     }
 
     // Update is called once per frame
