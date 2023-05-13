@@ -3,8 +3,10 @@ using UnityEngine.UI;
 
 public class CardBehaviour : MonoBehaviour
 {
-    public Text text;
+    public Text healthText;
+    public Text effectText;
     public int health = 5;
+    public string effect = "Nuetral";
 
     // Start is called before the first frame update
     void Start()
@@ -13,12 +15,14 @@ public class CardBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        text.text = $"HP: {health}";
+        healthText.text = $"HP: {health}";
+        effectText.text = $"Effect: {effect}";
     }
 
     // Update is called once per frame
     void Update()
     {
-        text.text = $"HP: {health}";
+        healthText.text = $"HP: {health}";
+        effectText.text = $"Effect: {effect}";
     }
 }
