@@ -23,7 +23,10 @@ public enum GameFlowModifier
     Opponent_TakesExtraTurn,
 
     Player_SkipDecay,
-    Opponent_SkipDecay
+    Opponent_SkipDecay,
+
+    Player_DrawBonusCard,
+    Opponent_DrawBonusCard
 }
 
 public enum Actor
@@ -158,6 +161,10 @@ internal class CardGame
 
             case GamePhase.PlayerPickUp:
                 PickUpCard(Actor.Player);
+                while (UseFlowModifierIfActive(GameFlowModifier.Player_DrawBonusCard))
+                {
+                    PickUpCard(Actor.Player);
+                }
                 break;
 
             case GamePhase.AiChoose:
@@ -179,6 +186,10 @@ internal class CardGame
 
             case GamePhase.AiPickUp:
                 PickUpCard(Actor.Opponent);
+                while (UseFlowModifierIfActive(GameFlowModifier.Opponent_DrawBonusCard))
+                {
+                    PickUpCard(Actor.Opponent);
+                }
                 break;
         }
 
@@ -331,7 +342,9 @@ internal class CardGame
                 }
                 break;
             case CardAction.Draw:
-                PickUpCard(me.Actor);
+                gameFlowModifiers.Add(me.Actor == Actor.Player
+                    ? GameFlowModifier.Player_DrawBonusCard
+                    : GameFlowModifier.Opponent_DrawBonusCard);
                 break;
             case CardAction.LifeSteal:
                 me.CardsInHand[0].Health += 1;
