@@ -143,10 +143,20 @@ internal class CardGame
             case CardAction.Steal:
                 break;
             case CardAction.LifeDrain:
+                foreach(CardData handCard in me.CardsInHand)
+                {
+                    handCard.Health = handCard.Health - 1;
+                }
                 break;
             case CardAction.Agro:
+                CardData selectedCard = opponent.CardsInHand[0];
+                selectedCard.Health = selectedCard.Health - 2;
                 break;
             case CardAction.TakeLifeForce:
+                foreach (CardData handCard in opponent.CardsInHand)
+                {
+                    handCard.Health = handCard.Health - 1;
+                }
                 break;
             case CardAction.Draw:
                 break;
