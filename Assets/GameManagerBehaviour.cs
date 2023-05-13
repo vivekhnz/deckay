@@ -169,16 +169,15 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.AiChoose:
-                // todo: AI picks a card from their hand
+                Invoke(nameof(MoveToNextPhase), 3.0f);
+                break;
+
+            case GamePhase.AiExecute:
                 var chosenCard = opponentHand[0];
                 opponentHand.RemoveAt(0);
                 opponentChosenCard = chosenCard.data;
                 Destroy(chosenCard.gameObject);
 
-                Invoke(nameof(MoveToNextPhase), 3.0f);
-                break;
-
-            case GamePhase.AiExecute:
                 ExecuteCard(opponentChosenCard, false);
 
                 Invoke(nameof(MoveToNextPhase), 3.0f);
