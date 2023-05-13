@@ -81,6 +81,27 @@ internal class CardGame
         actorState.CardsInHand.Remove(card);
     }
 
+    /// <returns>Cards that decayed to zero health.</returns>
+    internal List<CardData> DecayCards(Actor actor)
+    {
+        var actorState = GetActorState(actor);
+
+        var removedCards = new List<CardData>();
+        for (int i = 0; i < actorState.CardsInHand.Count; i++)
+        {
+            var card = actorState.CardsInHand[i];
+            card.Health--;
+            if (card.Health == 0)
+            {
+                removedCards.Add(card);
+                actorState.CardsInHand.RemoveAt(i);
+                i--;
+            }
+        }
+
+        return removedCards;
+    }
+
     private ActorState GetActorState(Actor actor)
     {
         switch (actor)

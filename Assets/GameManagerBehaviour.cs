@@ -122,18 +122,9 @@ public class GameManagerBehaviour : MonoBehaviour
                     executingPlayerText.gameObject.SetActive(false);
                     executingCard.gameObject.SetActive(false);
 
-                    var toRemove = new List<CardData>();
-                    foreach (var card in game.Player.CardsInHand)
+                    var expiredCards = game.DecayCards(Actor.Player);
+                    foreach (var card in expiredCards)
                     {
-                        card.Health--;
-                        if (card.Health == 0)
-                        {
-                            toRemove.Add(card);
-                        }
-                    }
-                    foreach (var card in toRemove)
-                    {
-                        game.Player.CardsInHand.Remove(card);
                         Destroy(cardObjByData[card].gameObject);
                     }
 
@@ -164,18 +155,9 @@ public class GameManagerBehaviour : MonoBehaviour
                     executingPlayerText.gameObject.SetActive(false);
                     executingCard.gameObject.SetActive(false);
 
-                    var toRemove = new List<CardData>();
-                    foreach (var card in game.Opponent.CardsInHand)
+                    var expiredCards = game.DecayCards(Actor.Opponent);
+                    foreach (var card in expiredCards)
                     {
-                        card.Health--;
-                        if (card.Health == 0)
-                        {
-                            toRemove.Add(card);
-                        }
-                    }
-                    foreach (var card in toRemove)
-                    {
-                        game.Opponent.CardsInHand.Remove(card);
                         Destroy(cardObjByData[card].gameObject);
                     }
 
@@ -238,7 +220,7 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         if (currentPhase != GamePhase.Dealing)
         {
-            if (game.Player.CardsInHand.Count == 0) { GameOver(true); }
+            if (game.Opponent.CardsInHand.Count == 0) { GameOver(true); }
             else if (game.Player.CardsInHand.Count == 0) { GameOver(false); }
         }
     }
