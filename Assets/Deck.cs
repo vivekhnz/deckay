@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using Random = System.Random;
 
 
 class CardData
@@ -41,15 +43,17 @@ internal class Deck
         {
             if (i < deckSize - 40)
             {
-                
+                Debug.Log("Spawned Nuetral");
                 cardList.Add( new CardData { Effect = "Nuetral", Health = rng.Next(3, 7)});
             }
             else if (i >= deckSize - 40 && i < deckSize-10)
             {
+                Debug.Log("Spawned Attack");
                 cardList.Add(new CardData { Effect = "Attack", Health = rng.Next(3, 7)});
             }
             else if (i >= deckSize - 10 && i < deckSize)
             {
+                Debug.Log("Spawned Defend");
                 cardList.Add(new CardData { Effect = "Defend", Health = rng.Next(3, 7)});
             }
         }

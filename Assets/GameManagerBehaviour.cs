@@ -26,6 +26,7 @@ public class GameManagerBehaviour : MonoBehaviour
         var card = cardObj.GetComponent<CardBehaviour>();
         var cardData = deck.GetNextCard();
         card.health = cardData.Health;
+        card.effect = cardData.Effect;
     }
 
     // Update is called once per frame
