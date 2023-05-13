@@ -90,6 +90,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     {
                         card = DealCard(deck, new Vector2(i * -handOffset, 0), playerDeal);
                     }
+                    card.flipped = true;
                     playerHand.Add(card);
                 }
 
@@ -107,6 +108,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     {
                         card = DealCard(deck, new Vector2(i * -handOffset, 0), playerDeal);
                     }
+                    card.flipped = false;
                     opponentHand.Add(card);
                 }
 
@@ -155,15 +157,18 @@ public class GameManagerBehaviour : MonoBehaviour
 
                     // pick up new card to player hand
                     int currentHandSize = playerHand.Count;
+                    CardBehaviour cardDraw;
                     if (currentHandSize % 2 == 1)
                     {
-                        playerHand.Add(DealCard(deck, new Vector2(((currentHandSize * handOffset) + handOffset), 0), true));
+                        cardDraw = DealCard(deck, new Vector2(((currentHandSize * handOffset) + handOffset), 0), true);
                     }
                     else
                     {
-                        playerHand.Add(DealCard(deck, new Vector2(currentHandSize * -handOffset, 0), true));
+                        cardDraw = DealCard(deck, new Vector2(currentHandSize * -handOffset, 0), true);
                     }
 
+                    cardDraw.flipped = true;
+                    playerHand.Add(cardDraw);
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
@@ -206,15 +211,18 @@ public class GameManagerBehaviour : MonoBehaviour
 
                     // pick up new card to ai hand
                     int opponentHandSize = opponentHand.Count;
+                    CardBehaviour cardDraw;
                     if (opponentHandSize % 2 == 1)
                     {
-                        opponentHand.Add(DealCard(deck, new Vector2(((opponentHandSize * handOffset) + handOffset), 0), false));
+                        cardDraw = DealCard(deck, new Vector2(((opponentHandSize * handOffset) + handOffset), 0), false);
                     }
                     else
                     {
-                        opponentHand.Add(DealCard(deck, new Vector2(opponentHandSize * -handOffset, 0), false));
+                        cardDraw = DealCard(deck, new Vector2(opponentHandSize * -handOffset, 0), false);
                     }
 
+                    cardDraw.flipped = false;
+                    opponentHand.Add(cardDraw);
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
@@ -274,6 +282,7 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         // todo: execute card's effect
         executingPlayerText.text = $"{(isPlayerCard ? "You" : "Opponent")} played";
+        executingCard.flipped = true;
         executingCard.data = card;
         executingPlayerText.gameObject.SetActive(true);
         executingCard.gameObject.SetActive(true);

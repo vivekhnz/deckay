@@ -12,6 +12,7 @@ public class CardBehaviour : MonoBehaviour
     public UnityEvent onClickAction = new UnityEvent();
     public Sprite cardFront;
     public Sprite cardBack;
+    public bool flipped = false;
     private Image image;
 
     // Start is called before the first frame update
@@ -31,7 +32,8 @@ public class CardBehaviour : MonoBehaviour
     {
         healthText.text = data.Health.ToString();
         effectText.text = $"Effect: {data.Effect}";
-        image.sprite = data.Effect == CardAction.Draw ? cardBack : cardFront;
+        //image.sprite = data.Effect == CardAction.Draw ? cardBack : cardFront;
+        image.sprite = flipped == false ? cardBack : cardFront;
     }
 
     public void onCardClicked()
