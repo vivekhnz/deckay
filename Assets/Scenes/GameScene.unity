@@ -675,7 +675,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caef12bb9ff5640459ec57ece5c29a69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialHandSize: 5
   cardPrefab: {fileID: 2464230670915485181, guid: 66a32b911ab69a246ab304bec1c6a82e, type: 3}
   rootCanvas: {fileID: 1863821866}
   playerHandPanel: {fileID: 540894004}
@@ -1207,10 +1206,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
