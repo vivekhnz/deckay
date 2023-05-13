@@ -81,8 +81,13 @@ public class GameManagerBehaviour : MonoBehaviour
                 Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
+            case GamePhase.PlayerPickUp:
+                // todo: start pickup animation
+                Invoke(nameof(MoveToNextPhase), 1.0f);
+                break;
+
             case GamePhase.AiChoose:
-                Invoke(nameof(MoveToNextPhase), 3.0f);
+                Invoke(nameof(MoveToNextPhase), 2.0f);
                 break;
 
             case GamePhase.AiExecute:
@@ -92,6 +97,11 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.AiDecay:
                 // todo: start decay animation
+                Invoke(nameof(MoveToNextPhase), 1.0f);
+                break;
+
+            case GamePhase.AiPickUp:
+                // todo: start pickup animation
                 Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
         }

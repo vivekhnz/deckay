@@ -10,9 +10,20 @@ public enum GamePhase
     PlayerChoose,
     PlayerExecute,
     PlayerDecay,
+    PlayerPickUp,
     AiChoose,
     AiExecute,
-    AiDecay
+    AiDecay,
+    AiPickUp
+}
+
+public enum GameFlowModifier
+{
+    Player_TakesExtraTurn,
+    Opponent_TakesExtraTurn,
+
+    Player_SkipDecay,
+    Opponent_SkipDecay
 }
 
 public enum Actor
@@ -23,8 +34,14 @@ public enum Actor
 
 public class ActorState
 {
+    public Actor Actor;
     public List<CardData> CardsInHand = new List<CardData>();
     public CardData SelectedCard = null;
+
+    public ActorState(Actor actor)
+    {
+        Actor = actor;
+    }
 
     public void Reset()
     {
@@ -39,6 +56,7 @@ internal class CardGame
     private const int initialHandSize = 5;
 
     private Deck deck;
+    private HashSet<GameFlowModifier> gameFlowModifiers;
 
     public GamePhase CurrentPhase;
     public ActorState Player;
@@ -47,22 +65,69 @@ internal class CardGame
     public CardGame()
 	{
         rng = new Random();
+        
         deck = new Deck();
+
+        gameFlowModifiers = new HashSet<GameFlowModifier>();
+
         CurrentPhase = GamePhase.Startup;
-        Player = new ActorState();
-        Opponent = new ActorState();
+        Player = new ActorState(Actor.Player);
+        Opponent = new ActorState(Actor.Opponent);
+    }
+
+    /// <returns>Whether the specified game flow modifier is active.</returns>
+    private bool UseFlowModifierIfActive(GameFlowModifier modifier)
+    {
+        if (gameFlowModifiers.Contains(modifier))
+        {
+            gameFlowModifiers.Remove(modifier);
+            return true;
+        }
+        return false;
+    }
+
+    private GamePhase GetNextPhase(GamePhase currentPhase)
+    {
+        switch (currentPhase)
+        {
+            case GamePhase.Startup:
+                return GamePhase.Dealing;
+            case GamePhase.Dealing:
+                return GamePhase.PlayerChoose;
+
+            case GamePhase.PlayerChoose:
+                return GamePhase.PlayerExecute;
+            case GamePhase.PlayerExecute:
+                if (UseFlowModifierIfActive(GameFlowModifier.Player_SkipDecay))
+                {
+                    return GamePhase.PlayerPickUp;
+                }
+                return GamePhase.PlayerDecay;
+            case GamePhase.PlayerDecay:
+                return GamePhase.PlayerPickUp;
+            case GamePhase.PlayerPickUp:
+                return GamePhase.AiChoose;
+
+            case GamePhase.AiChoose:
+                return GamePhase.AiExecute;
+            case GamePhase.AiExecute:
+                if (UseFlowModifierIfActive(GameFlowModifier.Opponent_SkipDecay))
+                {
+                    return GamePhase.AiPickUp;
+                }
+                return GamePhase.AiDecay;
+            case GamePhase.AiDecay:
+                return GamePhase.AiPickUp;
+            case GamePhase.AiPickUp:
+                return GamePhase.PlayerChoose;
+        }
+
+        throw new NotImplementedException();
     }
 
     internal void MoveToNextPhase()
     {
-        if (CurrentPhase == GamePhase.AiDecay)
-        {
-            CurrentPhase = GamePhase.PlayerChoose;
-        }
-        else
-        {
-            CurrentPhase++;
-        }
+        CurrentPhase = GetNextPhase(CurrentPhase);
 
         // begin the next phase
         switch (CurrentPhase)
@@ -81,6 +146,9 @@ internal class CardGame
 
             case GamePhase.PlayerDecay:
                 DecayCards(Actor.Player);
+                break;
+
+            case GamePhase.PlayerPickUp:
                 PickUpCard(Actor.Player);
                 break;
 
@@ -99,6 +167,9 @@ internal class CardGame
 
             case GamePhase.AiDecay:
                 DecayCards(Actor.Opponent);
+                break;
+
+            case GamePhase.AiPickUp:
                 PickUpCard(Actor.Opponent);
                 break;
         }
@@ -196,22 +267,34 @@ internal class CardGame
         // ensure that cards are always face up when executing
         var executingCard = me.SelectedCard;
         executingCard.IsFaceDown = false;
-        ExecuteCard(executingCard, me, opponent);
+        
+        var modifiers = ExecuteCard(executingCard, me, opponent);
+        foreach (var modifier in modifiers)
+        {
+            gameFlowModifiers.Add(modifier);
+        }
     }
 
-    private void ExecuteCard(CardData card, ActorState me, ActorState opponent)
+    private List<GameFlowModifier> ExecuteCard(CardData card, ActorState me, ActorState opponent)
     {
-        // todo: update actor states according to card's effect
+        var flowModifiers = new List<GameFlowModifier>();
+
         Debug.Log($"Executing card effect '{card.Effect}'");
         switch (card.Effect)
         {
             case CardAction.DoubleTurn:
+                gameFlowModifiers.Add(opponent.Actor == Actor.Player
+                    ? GameFlowModifier.Player_TakesExtraTurn
+                    : GameFlowModifier.Opponent_TakesExtraTurn);
                 break;
             case CardAction.Discard:
                 CardData removedCard = opponent.CardsInHand[0];
                 opponent.CardsInHand.Remove(removedCard);
                 break;
             case CardAction.ExtraTurn:
+                gameFlowModifiers.Add(me.Actor == Actor.Player
+                    ? GameFlowModifier.Player_TakesExtraTurn
+                    : GameFlowModifier.Opponent_TakesExtraTurn);
                 break;
             case CardAction.Blind:
                 CardData blindCard = opponent.CardsInHand[0];
@@ -247,6 +330,9 @@ internal class CardGame
                 opponent.CardsInHand[0].Health -= 1;
                 break;
             case CardAction.Skip:
+                gameFlowModifiers.Add(me.Actor == Actor.Player
+                    ? GameFlowModifier.Player_SkipDecay
+                    : GameFlowModifier.Opponent_SkipDecay);
                 break;
             case CardAction.Refurbish:
                 me.CardsInHand[0].Health += 2;
@@ -255,6 +341,8 @@ internal class CardGame
                 int roll = rng.Next(1, 7);
                 break;
         }
+
+        return flowModifiers;
     }
 
     private ActorState GetActorState(Actor actor)
