@@ -36,9 +36,6 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         game = new CardGame();
 
-        executingPlayerText.gameObject.SetActive(false);
-        executingCard.gameObject.SetActive(false);
-
         currentPhase = GamePhase.Dealing;
         BeginPhase(currentPhase);
     }
@@ -92,8 +89,6 @@ public class GameManagerBehaviour : MonoBehaviour
                 cardObjByData.Clear();
 
                 winConditionText.gameObject.SetActive(false);
-                executingPlayerText.gameObject.SetActive(false);
-                executingCard.gameObject.SetActive(false);
 
                 game.DealCards(initialHandSize);
                 foreach (var card in game.Player.CardsInHand)
@@ -119,9 +114,6 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.PlayerDecay:
                 {
-                    executingPlayerText.gameObject.SetActive(false);
-                    executingCard.gameObject.SetActive(false);
-
                     var expiredCards = game.DecayCards(Actor.Player);
                     foreach (var card in expiredCards)
                     {
@@ -152,9 +144,6 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.AiDecay:
                 {
-                    executingPlayerText.gameObject.SetActive(false);
-                    executingCard.gameObject.SetActive(false);
-
                     var expiredCards = game.DecayCards(Actor.Opponent);
                     foreach (var card in expiredCards)
                     {
@@ -200,24 +189,35 @@ public class GameManagerBehaviour : MonoBehaviour
         card.IsFaceDown = false;
 
         // todo: execute card's effect
-        executingPlayerText.text = $"{(isPlayerCard ? "You" : "Opponent")} played";
-        executingCard.data = card;
-        executingPlayerText.gameObject.SetActive(true);
-        executingCard.gameObject.SetActive(true);
 
         // todo: run animation for the player's chosen card
-
-        DiscardCard(card);
-    }
-
-    private void DiscardCard(CardData card)
-    {
-        // todo: discard card
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (currentPhase == GamePhase.PlayerExecute || currentPhase == GamePhase.AiExecute)
+        {
+            if (currentPhase == GamePhase.PlayerExecute)
+            {
+                executingPlayerText.text = "You played";
+                executingCard.data = game.Player.SelectedCard;
+            }
+            else
+            {
+                executingPlayerText.text = "Opponent played";
+                executingCard.data = game.Opponent.SelectedCard;
+            }
+
+            executingPlayerText.gameObject.SetActive(true);
+            executingCard.gameObject.SetActive(true);
+        }
+        else
+        {
+            executingPlayerText.gameObject.SetActive(false);
+            executingCard.gameObject.SetActive(false);
+        }
+
         if (currentPhase != GamePhase.Dealing)
         {
             if (game.Opponent.CardsInHand.Count == 0) { GameOver(true); }
