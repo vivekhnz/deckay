@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum GamePhase
 {
@@ -21,6 +22,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform opponentHandPanel;
     public Text currentPhaseText;
     public Text executingPlayerText;
+    public Text winConditionText;
     public CardBehaviour executingCard;
 
     private int handSize = 5;
@@ -53,6 +55,19 @@ public class GameManagerBehaviour : MonoBehaviour
         BeginPhase(currentPhase);
     }
 
+    public void GameOver(bool win)
+    {
+        winConditionText.text = $"You {(win ? "Win" : "Lose")}";
+        winConditionText.gameObject.SetActive(true);
+
+        Invoke(nameof(RestartGame), 3.0f);
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public void ChooseCardFromPlayerHand(CardBehaviour card)
     {
         Debug.Log("Was Clicked" + card.data.Health);
@@ -70,6 +85,7 @@ public class GameManagerBehaviour : MonoBehaviour
             case GamePhase.Dealing:
                 deck = new Deck();
 
+                winConditionText.gameObject.SetActive(false);
                 executingPlayerText.gameObject.SetActive(false);
                 executingCard.gameObject.SetActive(false);
 
@@ -300,6 +316,10 @@ public class GameManagerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (currentPhase != GamePhase.Dealing)
+        {
+            if (playerHand.Count == 0) { GameOver(true); }
+            else if (opponentHand.Count == 0) { GameOver(false); }
+        }
     }
 }
