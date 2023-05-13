@@ -10,6 +10,7 @@ public class CardBehaviour : MonoBehaviour
     public UnityEvent onClickAction = new UnityEvent();
     public Sprite cardFront;
     public Sprite cardBack;
+    public Sprite cardWildcard;
     public Sprite[] sprites;
     private Image image;
 
@@ -30,8 +31,7 @@ public class CardBehaviour : MonoBehaviour
     {
         healthText.text = data.Health.ToString();
         effect = data.Effect;
-        cardFront = sprites[(int)effect];
-        //image.sprite = data.Effect == CardAction.Draw ? cardBack : cardFront;
+        cardFront = data.IsWildcard ? cardWildcard : sprites[(int)effect];
         image.sprite = data.IsFaceDown ? cardBack : cardFront;
     }
 

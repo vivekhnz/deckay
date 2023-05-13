@@ -27,9 +27,7 @@ public enum CardAction
     /// <summary>You do not lose any life this turn.</summary>
     Skip,
     /// <summary>One card in your hand gains 2 life.</summary>
-    Refurbish,
-    /// <summary>Fate will decide...</summary>
-    WildCard
+    Refurbish
 }
 
 
@@ -38,14 +36,15 @@ public class CardData
     public int Health;
     public CardAction Effect;
     public bool IsFaceDown;
+    public bool IsWildcard;
 }
 
 internal class Deck
 {
     private readonly Random rng;
     public List<CardData> cardList;
-    private int deckSize = 50;
     private int topOfDeck = 0;
+
     public Deck()
     {
         rng = new Random();
@@ -55,10 +54,10 @@ internal class Deck
 
     public void shuffle()
     {
-        for(int i = 0; i < deckSize; i++)
+        for(int i = 0; i < cardList.Count; i++)
         {
             CardData temp = cardList[i];
-            int randomIndex = rng.Next(i, deckSize);
+            int randomIndex = rng.Next(i, cardList.Count);
             cardList[i] = cardList[randomIndex];
             cardList[randomIndex] = temp;
         }
@@ -72,7 +71,6 @@ internal class Deck
         for(int i = 0; i < 2; i++)
         {
             cardList.Add( new CardData { Effect = CardAction.Refurbish, Health = 2});
-            cardList.Add(new CardData { Effect = CardAction.WildCard, Health = 2 });
         }
 
         // adding 3 of each
@@ -101,14 +99,27 @@ internal class Deck
             cardList.Add(new CardData { Effect = CardAction.Discard, Health = 4 });
         }
 
-        // check the whole deck was loaded correctly 
-        if (cardList.Count == deckSize) { Debug.Log("Deck Loaded!"); }
+        // mark a certain no. of cards as wildcards
+        int wildcardCount = 2;
+        var wildcardIndexes = new List<int>();
+        while (wildcardIndexes.Count < wildcardCount)
+        {
+            int index = rng.Next(cardList.Count);
+            if (!wildcardIndexes.Contains(index))
+            {
+                wildcardIndexes.Add(index);
+            }
+        }
+        foreach (int index in wildcardIndexes)
+        {
+            cardList[index].IsWildcard = true;
+        }
     }
 
     public CardData GetNextCard() // have player hand collection as argument
     {
         // if deck stack is empty call reshuffle
-        if(topOfDeck == deckSize)
+        if(topOfDeck == cardList.Count)
         {
             topOfDeck = 0;
             fillDeck();

@@ -283,9 +283,10 @@ internal class CardGame
                 throw new NotImplementedException();
         }
 
-        // ensure that cards are always face up when executing
+        // ensure that cards are face up & wildcards are revealed when executing
         var executingCard = me.SelectedCard;
         executingCard.IsFaceDown = false;
+        executingCard.IsWildcard = false;
         
         var modifiers = ExecuteCard(executingCard, me, opponent);
         foreach (var modifier in modifiers)
@@ -382,12 +383,6 @@ internal class CardGame
                 {
                     var targetCard = RandomCard(me.CardsInHand);
                     targetCard.Health += 2;
-                }
-                break;
-            case CardAction.WildCard:
-                {
-                    int roll = rng.Next(1, 7);
-                    // todo: implement wildcard
                 }
                 break;
         }
