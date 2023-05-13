@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
+using System.Linq;
 
 public enum GamePhase
 {
@@ -74,18 +76,16 @@ public class GameManagerBehaviour : MonoBehaviour
 
     void BeginPhase(GamePhase phase)
     {
-        var playerCardsToAdd = new List<CardData>();
-        var opponentCardsToAdd = new List<CardData>();
-        var cardsToDelete = new List<CardData>();
+        // shallow-copy cards before game logic executes
+        // we'll diff afterwards and update the UI accordingly
+        var playerCardsBefore = new List<CardData>(game.Player.CardsInHand);
+        var opponentCardsBefore = new List<CardData>(game.Opponent.CardsInHand);
 
-        // logic pass
-
+        // update game simulation
         switch (phase)
         {
             case GamePhase.Dealing:
                 game.DealCards(initialHandSize);
-                playerCardsToAdd.AddRange(game.Player.CardsInHand);
-                opponentCardsToAdd.AddRange(game.Opponent.CardsInHand);
                 break;
 
             case GamePhase.PlayerChoose:
@@ -97,8 +97,8 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.PlayerDecay:
-                cardsToDelete.AddRange(game.DecayCards(Actor.Player));
-                playerCardsToAdd.Add(game.PickUpCard(Actor.Player));
+                game.DecayCards(Actor.Player);
+                game.PickUpCard(Actor.Player);
                 break;
 
             case GamePhase.AiChoose:
@@ -109,20 +109,25 @@ public class GameManagerBehaviour : MonoBehaviour
                 // AI chooses a card
                 var selectedCard = game.Opponent.CardsInHand[0];
                 game.ChooseCard(Actor.Opponent, selectedCard);
-                cardsToDelete.Add(selectedCard);
 
                 // AI executes that card
                 game.Execute(Actor.Opponent);
                 break;
 
             case GamePhase.AiDecay:
-                cardsToDelete.AddRange(game.DecayCards(Actor.Opponent));
-                opponentCardsToAdd.Add(game.PickUpCard(Actor.Opponent));
+                game.DecayCards(Actor.Opponent);
+                game.PickUpCard(Actor.Opponent);
                 break;
         }
 
-        // ui pass
+        // diff cards to determine what UI updates to make
+        var playerCardsToAdd = game.Player.CardsInHand.Where(card => !playerCardsBefore.Contains(card));
+        var opponentCardsToAdd = game.Opponent.CardsInHand.Where(card => !opponentCardsBefore.Contains(card));
+        var cardsToDelete = new List<CardData>();
+        cardsToDelete.AddRange(playerCardsBefore.Where(card => !game.Player.CardsInHand.Contains(card)));
+        cardsToDelete.AddRange(opponentCardsBefore.Where(card => !game.Opponent.CardsInHand.Contains(card)));
 
+        // update UI
         foreach (var card in playerCardsToAdd)
         {
             CreatePlayerCardObject(card);
