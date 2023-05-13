@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = System.Random;
 
 public enum CardAction
@@ -27,6 +24,7 @@ public class CardData
 {
     public int Health;
     public CardAction Effect;
+    public bool IsFaceDown;
 }
 
 internal class Deck

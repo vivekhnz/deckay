@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -8,11 +7,9 @@ public class CardBehaviour : MonoBehaviour
     public Text healthText;
     public Text effectText;
     public CardData data = new CardData();
-    public bool isClickable = false;
     public UnityEvent onClickAction = new UnityEvent();
     public Sprite cardFront;
     public Sprite cardBack;
-    public bool flipped = false;
     private Image image;
 
     // Start is called before the first frame update
@@ -33,14 +30,11 @@ public class CardBehaviour : MonoBehaviour
         healthText.text = data.Health.ToString();
         effectText.text = $"Effect: {data.Effect}";
         //image.sprite = data.Effect == CardAction.Draw ? cardBack : cardFront;
-        image.sprite = flipped == false ? cardBack : cardFront;
+        image.sprite = data.IsFaceDown ? cardBack : cardFront;
     }
 
     public void onCardClicked()
     {
-        if (isClickable == true)
-        {
-            onClickAction.Invoke();
-        }
+        onClickAction.Invoke();
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public enum GamePhase
 {
@@ -15,6 +16,7 @@ public enum GamePhase
 
 public class GameManagerBehaviour : MonoBehaviour
 {
+    public int initialHandSize = 5;
     public GameObject cardPrefab;
     public Transform rootCanvas;
     public Transform playerHandPanel;
@@ -23,18 +25,20 @@ public class GameManagerBehaviour : MonoBehaviour
     public Text executingPlayerText;
     public CardBehaviour executingCard;
 
-    private int handSize = 5;
-    private int handOffset = 50;
     private Deck deck;
     private GamePhase currentPhase;
-    private List<CardBehaviour> playerHand = new List<CardBehaviour>();
-    private List<CardBehaviour> opponentHand = new List<CardBehaviour>();
+    private List<CardData> playerHand = new List<CardData>();
+    private List<CardData> opponentHand = new List<CardData>();
     private CardData playerChosenCard = null;
     private CardData opponentChosenCard = null;
+    private Dictionary<CardData, CardBehaviour> cardObjByData = new Dictionary<CardData, CardBehaviour>();
 
     // Start is called before the first frame update
     void Start()
     {
+        executingPlayerText.gameObject.SetActive(false);
+        executingCard.gameObject.SetActive(false);
+
         currentPhase = GamePhase.Dealing;
         BeginPhase(currentPhase);
     }
@@ -55,9 +59,15 @@ public class GameManagerBehaviour : MonoBehaviour
 
     public void ChooseCardFromPlayerHand(CardBehaviour card)
     {
+        if (currentPhase != GamePhase.PlayerChoose)
+        {
+            // ignore click if we're not in the choose phase
+            return;
+        }
+
         Debug.Log("Was Clicked" + card.data.Health);
         playerChosenCard = card.data;
-        playerHand.Remove(card);
+        playerHand.Remove(card.data);
         Destroy(card.gameObject);
         MoveToNextPhase();
     }
@@ -69,68 +79,34 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             case GamePhase.Dealing:
                 deck = new Deck();
-
-                executingPlayerText.gameObject.SetActive(false);
-                executingCard.gameObject.SetActive(false);
+                cardObjByData.Clear();
 
                 playerHand.Clear();
-
-                bool playerDeal = true;
-
-                // replace for loop with card count possibly. 
-                for (int i = 0; i < handSize; i++)
+                for (int i = 0; i < initialHandSize; i++)
                 {
-                    CardBehaviour card;
-
-                    if (i % 2 == 1)
-                    {
-                        card = DealCard(deck, new Vector2(((i * handOffset) + handOffset), 0), playerDeal);
-                    }
-                    else
-                    {
-                        card = DealCard(deck, new Vector2(i * -handOffset, 0), playerDeal);
-                    }
-                    card.flipped = true;
-                    playerHand.Add(card);
+                    var cardData = deck.GetNextCard();
+                    playerHand.Add(cardData);
+                    CreatePlayerCardObject(cardData);
                 }
 
-                playerDeal = false;
-
-                for (int i = 0; i < handSize; i++)
+                opponentHand.Clear();
+                for (int i = 0; i < initialHandSize; i++)
                 {
-                    CardBehaviour card;
-
-                    if (i % 2 == 1)
-                    {
-                        card = DealCard(deck, new Vector2(((i * handOffset) + handOffset), 0), playerDeal);
-                    }
-                    else
-                    {
-                        card = DealCard(deck, new Vector2(i * -handOffset, 0), playerDeal);
-                    }
-                    card.flipped = false;
-                    opponentHand.Add(card);
+                    var cardData = deck.GetNextCard();
+                    cardData.IsFaceDown = true;
+                    opponentHand.Add(cardData);
+                    CreateOpponentCardObject(cardData);
                 }
 
                 Invoke(nameof(MoveToNextPhase), 1.0f);
-
                 break;
 
             case GamePhase.PlayerChoose:
                 // allow player to choose a card from their hand
-                foreach (var card in playerHand)
-                {
-                    card.isClickable = true;
-                }
                 break;
 
             case GamePhase.PlayerExecute:
                 ExecuteCard(playerChosenCard, true);
-                foreach (var card in playerHand)
-                {
-                    card.isClickable = false;
-                }
-
                 Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
@@ -139,11 +115,11 @@ public class GameManagerBehaviour : MonoBehaviour
                     executingPlayerText.gameObject.SetActive(false);
                     executingCard.gameObject.SetActive(false);
 
-                    var toRemove = new List<CardBehaviour>();
+                    var toRemove = new List<CardData>();
                     foreach (var card in playerHand)
                     {
-                        card.data.Health--;
-                        if (card.data.Health == 0)
+                        card.Health--;
+                        if (card.Health == 0)
                         {
                             toRemove.Add(card);
                         }
@@ -151,24 +127,14 @@ public class GameManagerBehaviour : MonoBehaviour
                     foreach (var card in toRemove)
                     {
                         playerHand.Remove(card);
-                        Destroy(card.gameObject);
-                        //adjustHand(playerHand, true);
+                        Destroy(cardObjByData[card].gameObject);
                     }
 
                     // pick up new card to player hand
-                    int currentHandSize = playerHand.Count;
-                    CardBehaviour cardDraw;
-                    if (currentHandSize % 2 == 1)
-                    {
-                        cardDraw = DealCard(deck, new Vector2(((currentHandSize * handOffset) + handOffset), 0), true);
-                    }
-                    else
-                    {
-                        cardDraw = DealCard(deck, new Vector2(currentHandSize * -handOffset, 0), true);
-                    }
+                    var cardData = deck.GetNextCard();
+                    playerHand.Add(cardData);
+                    CreatePlayerCardObject(cardData);
 
-                    cardDraw.flipped = true;
-                    playerHand.Add(cardDraw);
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
@@ -180,8 +146,8 @@ public class GameManagerBehaviour : MonoBehaviour
             case GamePhase.AiExecute:
                 var chosenCard = opponentHand[0];
                 opponentHand.RemoveAt(0);
-                opponentChosenCard = chosenCard.data;
-                Destroy(chosenCard.gameObject);
+                opponentChosenCard = chosenCard;
+                Destroy(cardObjByData[chosenCard].gameObject);
 
                 ExecuteCard(opponentChosenCard, false);
 
@@ -193,11 +159,11 @@ public class GameManagerBehaviour : MonoBehaviour
                     executingPlayerText.gameObject.SetActive(false);
                     executingCard.gameObject.SetActive(false);
 
-                    var toRemove = new List<CardBehaviour>();
+                    var toRemove = new List<CardData>();
                     foreach (var card in opponentHand)
                     {
-                        card.data.Health--;
-                        if (card.data.Health == 0)
+                        card.Health--;
+                        if (card.Health == 0)
                         {
                             toRemove.Add(card);
                         }
@@ -205,49 +171,27 @@ public class GameManagerBehaviour : MonoBehaviour
                     foreach (var card in toRemove)
                     {
                         opponentHand.Remove(card);
-                        Destroy(card.gameObject);
-                        //adjustHand(opponentHand, false);
+                        Destroy(cardObjByData[card].gameObject);
                     }
 
                     // pick up new card to ai hand
-                    int opponentHandSize = opponentHand.Count;
-                    CardBehaviour cardDraw;
-                    if (opponentHandSize % 2 == 1)
-                    {
-                        cardDraw = DealCard(deck, new Vector2(((opponentHandSize * handOffset) + handOffset), 0), false);
-                    }
-                    else
-                    {
-                        cardDraw = DealCard(deck, new Vector2(opponentHandSize * -handOffset, 0), false);
-                    }
+                    var cardData = deck.GetNextCard();
+                    cardData.IsFaceDown = true;
+                    opponentHand.Add(cardData);
+                    CreateOpponentCardObject(cardData);
 
-                    cardDraw.flipped = false;
-                    opponentHand.Add(cardDraw);
                     Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
         }
     }
 
-    private CardBehaviour DealCard(Deck deck, Vector2 position, bool playerDeal)
+    private void CreatePlayerCardObject(CardData cardData)
     {
-        var cardObj = Instantiate(cardPrefab);
-
-        if (playerDeal)
-        {
-            cardObj.transform.SetParent(playerHandPanel, false);
-        }
-        else
-        {
-            cardObj.transform.SetParent(opponentHandPanel, false);
-        }
-
-        var transform = cardObj.GetComponent<RectTransform>();
-        transform.anchoredPosition = position;
-
-        // if opponent display back not front of card
+        var cardObj = Instantiate(cardPrefab, playerHandPanel, false);
         var card = cardObj.GetComponent<CardBehaviour>();
-        card.data = deck.GetNextCard();
+        card.data = cardData;
+        cardObjByData[cardData] = card;
 
         card.onClickAction.AddListener(() =>
         {
@@ -256,33 +200,22 @@ public class GameManagerBehaviour : MonoBehaviour
                 ChooseCardFromPlayerHand(card);
             }
         });
-
-        return card;
     }
 
-    private void adjustHand(List<CardBehaviour> hand, bool playerTurn)
+    private void CreateOpponentCardObject(CardData cardData)
     {
-        for (int i = 0; i < hand.Count; i++)
-        {
-            var card = hand[i];
-            var transform = card.gameObject.GetComponent<RectTransform>();
-
-            if (i % 2 == 1)
-            {
-                transform.anchoredPosition = new Vector2(((i * handOffset) + handOffset), 0);
-            }
-            else
-            {
-                transform.anchoredPosition = new Vector2(i * -handOffset, 0);
-            }
-        }
+        var cardObj = Instantiate(cardPrefab, opponentHandPanel, false);
+        var card = cardObj.GetComponent<CardBehaviour>();
+        card.data = cardData;
+        cardObjByData[cardData] = card;
     }
 
     private void ExecuteCard(CardData card, bool isPlayerCard)
     {
+        card.IsFaceDown = false;
+
         // todo: execute card's effect
         executingPlayerText.text = $"{(isPlayerCard ? "You" : "Opponent")} played";
-        executingCard.flipped = true;
         executingCard.data = card;
         executingPlayerText.gameObject.SetActive(true);
         executingCard.gameObject.SetActive(true);
