@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public enum GamePhase
 {
@@ -25,10 +24,9 @@ public class GameManagerBehaviour : MonoBehaviour
     public Text executingPlayerText;
     public CardBehaviour executingCard;
 
-    private Deck deck;
+    private CardGame game;
+
     private GamePhase currentPhase;
-    private List<CardData> playerHand = new List<CardData>();
-    private List<CardData> opponentHand = new List<CardData>();
     private CardData playerChosenCard = null;
     private CardData opponentChosenCard = null;
     private Dictionary<CardData, CardBehaviour> cardObjByData = new Dictionary<CardData, CardBehaviour>();
@@ -36,6 +34,8 @@ public class GameManagerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        game = new CardGame();
+
         executingPlayerText.gameObject.SetActive(false);
         executingCard.gameObject.SetActive(false);
 
@@ -67,7 +67,7 @@ public class GameManagerBehaviour : MonoBehaviour
 
         Debug.Log("Was Clicked" + card.data.Health);
         playerChosenCard = card.data;
-        playerHand.Remove(card.data);
+        game.PlayerHand.Remove(card.data);
         Destroy(card.gameObject);
         MoveToNextPhase();
     }
@@ -78,24 +78,16 @@ public class GameManagerBehaviour : MonoBehaviour
         switch (phase)
         {
             case GamePhase.Dealing:
-                deck = new Deck();
                 cardObjByData.Clear();
 
-                playerHand.Clear();
-                for (int i = 0; i < initialHandSize; i++)
+                game.DealCards(initialHandSize);
+                foreach (var card in game.PlayerHand)
                 {
-                    var cardData = deck.GetNextCard();
-                    playerHand.Add(cardData);
-                    CreatePlayerCardObject(cardData);
+                    CreatePlayerCardObject(card);
                 }
-
-                opponentHand.Clear();
-                for (int i = 0; i < initialHandSize; i++)
+                foreach (var card in game.OpponentHand)
                 {
-                    var cardData = deck.GetNextCard();
-                    cardData.IsFaceDown = true;
-                    opponentHand.Add(cardData);
-                    CreateOpponentCardObject(cardData);
+                    CreateOpponentCardObject(card);
                 }
 
                 Invoke(nameof(MoveToNextPhase), 1.0f);
@@ -116,7 +108,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     executingCard.gameObject.SetActive(false);
 
                     var toRemove = new List<CardData>();
-                    foreach (var card in playerHand)
+                    foreach (var card in game.PlayerHand)
                     {
                         card.Health--;
                         if (card.Health == 0)
@@ -126,13 +118,12 @@ public class GameManagerBehaviour : MonoBehaviour
                     }
                     foreach (var card in toRemove)
                     {
-                        playerHand.Remove(card);
+                        game.PlayerHand.Remove(card);
                         Destroy(cardObjByData[card].gameObject);
                     }
 
                     // pick up new card to player hand
-                    var cardData = deck.GetNextCard();
-                    playerHand.Add(cardData);
+                    var cardData = game.PickUpCard(Hand.Player);
                     CreatePlayerCardObject(cardData);
 
                     Invoke(nameof(MoveToNextPhase), 1.0f);
@@ -144,8 +135,8 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.AiExecute:
-                var chosenCard = opponentHand[0];
-                opponentHand.RemoveAt(0);
+                var chosenCard = game.OpponentHand[0];
+                game.OpponentHand.RemoveAt(0);
                 opponentChosenCard = chosenCard;
                 Destroy(cardObjByData[chosenCard].gameObject);
 
@@ -160,7 +151,7 @@ public class GameManagerBehaviour : MonoBehaviour
                     executingCard.gameObject.SetActive(false);
 
                     var toRemove = new List<CardData>();
-                    foreach (var card in opponentHand)
+                    foreach (var card in game.OpponentHand)
                     {
                         card.Health--;
                         if (card.Health == 0)
@@ -170,14 +161,12 @@ public class GameManagerBehaviour : MonoBehaviour
                     }
                     foreach (var card in toRemove)
                     {
-                        opponentHand.Remove(card);
+                        game.OpponentHand.Remove(card);
                         Destroy(cardObjByData[card].gameObject);
                     }
 
                     // pick up new card to ai hand
-                    var cardData = deck.GetNextCard();
-                    cardData.IsFaceDown = true;
-                    opponentHand.Add(cardData);
+                    var cardData = game.PickUpCard(Hand.Opponent);
                     CreateOpponentCardObject(cardData);
 
                     Invoke(nameof(MoveToNextPhase), 1.0f);
