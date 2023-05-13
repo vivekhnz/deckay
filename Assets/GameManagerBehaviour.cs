@@ -130,14 +130,33 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.Decay:
+                List<CardBehaviour> toRemove = new List<CardBehaviour>();
                 foreach (var card in playerHand)
                 {
                     card.data.Health--;
+                    if(card.data.Health == 0)
+                    {
+                        toRemove.Add(card);
+                    }
                 }
+                foreach (var card in toRemove)
+                {
+                    playerHand.Remove(card);
+                }
+                toRemove.Clear();
                 foreach (var card in opponentHand)
                 {
                     card.data.Health--;
+                    if (card.data.Health == 0)
+                    {
+                        toRemove.Add(card);
+                    }
                 }
+                foreach (var card in toRemove)
+                {
+                    opponentHand.Remove(card);
+                }
+
 
                 // todo: discard cards that have reached 0 health
 
