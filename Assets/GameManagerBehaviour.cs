@@ -55,6 +55,7 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         Debug.Log("Was Clicked" + card.data.Health);
         playerChosenCard = card;
+        playerHand.Remove(card);
         MoveToNextPhase();
     }
 

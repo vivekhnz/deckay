@@ -25,7 +25,7 @@ public class CardBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthText.text = $"HP: {data.Health}";
+        healthText.text = data.Health.ToString();
         effectText.text = $"Effect: {data.Effect}";
     }
 
