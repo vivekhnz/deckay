@@ -1,61 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-public enum Hand
+public enum Actor
 {
     Player,
     Opponent
+}
+
+public class ActorState
+{
+    public List<CardData> CardsInHand = new List<CardData>();
+    public CardData SelectedCard = null;
+
+    public void Reset()
+    {
+        CardsInHand.Clear();
+        SelectedCard = null;
+    }
 }
 
 internal class CardGame
 {
     private Deck deck;
 
-    public List<CardData> PlayerHand;
-    public List<CardData> OpponentHand;
+    public ActorState Player;
+    public ActorState Opponent;
 
     public CardGame()
 	{
 		deck = new Deck();
-        PlayerHand = new List<CardData>();
-        OpponentHand = new List<CardData>();
-	}
+        Player = new ActorState();
+        Opponent = new ActorState();
+    }
 
     internal void DealCards(int cardsPerHand)
     {
-        PlayerHand.Clear();
+        Player.Reset();
         for (int i = 0; i < cardsPerHand; i++)
         {
             var cardData = deck.GetNextCard();
-            PlayerHand.Add(cardData);
+            Player.CardsInHand.Add(cardData);
         }
 
-        OpponentHand.Clear();
+        Opponent.Reset();
         for (int i = 0; i < cardsPerHand; i++)
         {
             var cardData = deck.GetNextCard();
             cardData.IsFaceDown = true;
-            OpponentHand.Add(cardData);
+            Opponent.CardsInHand.Add(cardData);
         }
     }
 
-    internal CardData PickUpCard(Hand hand)
+    internal CardData PickUpCard(Actor actor)
     {
         var card = deck.GetNextCard();
 
-        switch (hand)
+        switch (actor)
         {
-            case Hand.Player:
-                PlayerHand.Add(card);
+            case Actor.Player:
+                Player.CardsInHand.Add(card);
                 break;
-            case Hand.Opponent:
+            case Actor.Opponent:
                 card.IsFaceDown = true;
-                OpponentHand.Add(card);
+                Opponent.CardsInHand.Add(card);
                 break;
             default:
                 throw new NotImplementedException();
         }
 
         return card;
+    }
+
+    internal void ChooseCard(Actor actor, CardData card)
+    {
+        var actorState = GetActorState(actor);
+        Debug.Assert(actorState.CardsInHand.Contains(card));
+
+        actorState.SelectedCard = card;
+        actorState.CardsInHand.Remove(card);
+    }
+
+    private ActorState GetActorState(Actor actor)
+    {
+        switch (actor)
+        {
+            case Actor.Player:
+                return Player;
+            case Actor.Opponent:
+                return Opponent;
+            default:
+                throw new NotImplementedException();
+        }
     }
 }
