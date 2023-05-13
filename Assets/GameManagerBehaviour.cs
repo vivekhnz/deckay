@@ -19,6 +19,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform playerHandPanel;
     public Text currentPhaseText;
 
+    private int handSize = 5;
     private Deck deck;
     private GamePhase currentPhase;
     private List<CardBehaviour> playerHand = new List<CardBehaviour>();
@@ -49,7 +50,9 @@ public class GameManagerBehaviour : MonoBehaviour
 
     public void ChooseCardFromPlayerHand(CardBehaviour card)
     {
+        Debug.Log("Was Clicked" + card.data.Health);
         playerChosenCard = card;
+        MoveToNextPhase();
     }
 
     void BeginPhase(GamePhase phase)
@@ -63,7 +66,7 @@ public class GameManagerBehaviour : MonoBehaviour
                 playerHand.Clear();
 
                 // replace for loop with card count possibly. 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < handSize; i++)
                 {
                     CardBehaviour card;
                     
@@ -83,11 +86,19 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.PlayerChoose:
                 // todo: allow player to choose a card from their hand
+                for(int i = 0; i < handSize; i++)
+                {
+                    playerHand[i].isClickable = true;
+                }
                 playerChosenCard = playerHand[0];
                 break;
 
             case GamePhase.PlayerExecute:
                 ExecuteCard(playerChosenCard, true);
+                for (int i = 0; i < handSize; i++)
+                {
+                    playerHand[i].isClickable = false;
+                }
                 break;
 
             case GamePhase.AiChoose:
@@ -128,6 +139,14 @@ public class GameManagerBehaviour : MonoBehaviour
         // if opponent display back not front of card
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = deck.GetNextCard();
+
+        card.onClickAction.AddListener(() =>
+        {
+            if (currentPhase == GamePhase.PlayerChoose)
+            {
+                ChooseCardFromPlayerHand(card);
+            }
+        });
 
         return card;
     }
