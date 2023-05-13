@@ -10,10 +10,14 @@ public class CardBehaviour : MonoBehaviour
     public CardData data = new CardData();
     public bool isClickable = false;
     public UnityEvent onClickAction = new UnityEvent();
+    public Sprite cardFront;
+    public Sprite cardBack;
+    private Image image;
 
     // Start is called before the first frame update
     void Start()
     {
+        image = GetComponent<Image>();
     }
 
     private void Awake()
@@ -27,6 +31,7 @@ public class CardBehaviour : MonoBehaviour
     {
         healthText.text = data.Health.ToString();
         effectText.text = $"Effect: {data.Effect}";
+        image.sprite = data.Effect == CardAction.Draw ? cardBack : cardFront;
     }
 
     public void onCardClicked()
