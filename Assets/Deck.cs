@@ -2,13 +2,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = System.Random;
+
+public enum CardAction
+{
+    DoubleTurn = 0,
+    Discard,
+    ExtraTurn,
+    Blind,
+    Steal,
+    LifeDrain,
+    Agro,
+    TakeLifeForce,
+    Draw,
+    LifeSteal,
+    Skip,
+    Refurbish,
+    WildCard
+}
 
 
 public class CardData
 {
     public int Health;
-    public string Effect;
+    public CardAction Effect;
 }
 
 internal class Deck
@@ -38,24 +56,42 @@ internal class Deck
     public void fillDeck()
     {
         cardList = new List<CardData>();
-        for(int i = 0; i < deckSize; i++)
+
+        // adding 2 of each
+        for(int i = 0; i < 2; i++)
         {
-            if (i < deckSize - 40)
-            {
-                Debug.Log("Spawned Nuetral");
-                cardList.Add( new CardData { Effect = "Nuetral", Health = rng.Next(3, 7)});
-            }
-            else if (i >= deckSize - 40 && i < deckSize-10)
-            {
-                Debug.Log("Spawned Attack");
-                cardList.Add(new CardData { Effect = "Attack", Health = rng.Next(3, 7)});
-            }
-            else if (i >= deckSize - 10 && i < deckSize)
-            {
-                Debug.Log("Spawned Defend");
-                cardList.Add(new CardData { Effect = "Defend", Health = rng.Next(3, 7)});
-            }
+            cardList.Add( new CardData { Effect = CardAction.Refurbish, Health = rng.Next(3, 7)});
+            cardList.Add(new CardData { Effect = CardAction.WildCard, Health = rng.Next(3, 7) });
         }
+
+        // adding 3 of each
+        for (int i = 0; i < 3; i++)
+        {
+            cardList.Add(new CardData { Effect = CardAction.ExtraTurn, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.Blind, Health = rng.Next(3, 7) });
+        }
+
+        // adding 4 of each
+        for (int i = 0; i < 4; i++)
+        {
+            cardList.Add(new CardData { Effect = CardAction.DoubleTurn, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.LifeDrain, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.Draw, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.LifeSteal, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.Skip, Health = rng.Next(3, 7) });
+        }
+
+        // adding 5 of each
+        for (int i = 0; i < 5; i++)
+        {
+            cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.Agro, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.Steal, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.Discard, Health = rng.Next(3, 7) });
+        }
+
+        // check the whole deck was loaded correctly 
+        if (cardList.Count == deckSize) { Debug.Log("Deck Loaded!"); }
     }
 
     public CardData GetNextCard() // have player hand collection as argument

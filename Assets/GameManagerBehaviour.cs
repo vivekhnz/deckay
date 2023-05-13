@@ -26,7 +26,6 @@ public class GameManagerBehaviour : MonoBehaviour
     private GamePhase currentPhase;
     private List<CardBehaviour> playerHand = new List<CardBehaviour>();
     private List<CardBehaviour> opponentHand = new List<CardBehaviour>();
-    List<CardBehaviour> toRemove = new List<CardBehaviour>();
     private CardBehaviour playerChosenCard = null;
     private CardBehaviour opponentChosenCard = null;
 
@@ -103,7 +102,9 @@ public class GameManagerBehaviour : MonoBehaviour
                     }
                     opponentHand.Add(card);
                 }
-                // todo: deal opponent's hand
+
+                Invoke(nameof(MoveToNextPhase), 1.0f);
+
                 break;
 
             case GamePhase.PlayerChoose:
@@ -121,53 +122,63 @@ public class GameManagerBehaviour : MonoBehaviour
                 {
                     card.isClickable = false;
                 }
+
+                Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
             case GamePhase.PlayerDecay:
-                toRemove.Clear();
-                foreach (var card in playerHand)
                 {
-                    card.data.Health--;
-                    if (card.data.Health == 0)
+                    var toRemove = new List<CardBehaviour>();
+                    foreach (var card in playerHand)
                     {
-                        toRemove.Add(card);
+                        card.data.Health--;
+                        if (card.data.Health == 0)
+                        {
+                            toRemove.Add(card);
+                        }
                     }
-                }
-                foreach (var card in toRemove)
-                {
-                    playerHand.Remove(card);
-                    Destroy(card.gameObject);
+                    foreach (var card in toRemove)
+                    {
+                        playerHand.Remove(card);
+                        Destroy(card.gameObject);
+                    }
+
+                    Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
                 break;
 
             case GamePhase.AiChoose:
                 // todo: AI picks a card from their hand
                 opponentChosenCard = opponentHand[0];
+
+                Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
             case GamePhase.AiExecute:
                 ExecuteCard(opponentChosenCard, false);
+
+                Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
-            case GamePhase.AiDecay or GamePhase.PlayerDecay:
-                toRemove.Clear();
-                foreach (var card in opponentHand)
+            case GamePhase.AiDecay:
                 {
-                    card.data.Health--;
-                    if (card.data.Health == 0)
+                    var toRemove = new List<CardBehaviour>();
+                    foreach (var card in opponentHand)
                     {
-                        toRemove.Add(card);
+                        card.data.Health--;
+                        if (card.data.Health == 0)
+                        {
+                            toRemove.Add(card);
+                        }
                     }
+                    foreach (var card in toRemove)
+                    {
+                        opponentHand.Remove(card);
+                        Destroy(card.gameObject);
+                    }
+
+                    Invoke(nameof(MoveToNextPhase), 1.0f);
                 }
-                foreach (var card in toRemove)
-                {
-                    opponentHand.Remove(card);
-                    Destroy(card.gameObject);
-                }
-
-
-                // todo: discard cards that have reached 0 health
-
                 break;
         }
     }
