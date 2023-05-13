@@ -99,12 +99,6 @@ public class GameManagerBehaviour : MonoBehaviour
                 executingPlayerText.gameObject.SetActive(false);
                 executingCard.gameObject.SetActive(false);
 
-                //playerHand.Clear();
-
-                bool playerDeal = true;
-
-                // replace for loop with card count possibly. 
-                //for (int i = 0; i < handSize; i++)
                 game.DealCards(initialHandSize);
                 foreach (var card in game.PlayerHand)
                 {
