@@ -140,12 +140,20 @@ internal class CardGame
             case CardAction.DoubleTurn:
                 break;
             case CardAction.Discard:
+                CardData removedCard = opponent.CardsInHand[0];
+                opponent.CardsInHand.Remove(removedCard);
                 break;
             case CardAction.ExtraTurn:
                 break;
             case CardAction.Blind:
+                CardData blindCard = opponent.CardsInHand[0];
+                blindCard.IsFaceDown = blindCard.IsFaceDown ? false : true;
                 break;
             case CardAction.Steal:
+                CardData oppCard = opponent.CardsInHand[0];
+                CardData stolenCard = new CardData { Health = oppCard.Health, Effect = oppCard.Effect, IsFaceDown = oppCard.IsFaceDown ? false : true };
+                opponent.CardsInHand.Remove(oppCard);
+                me.CardsInHand.Add(stolenCard);
                 break;
             case CardAction.LifeDrain:
                 foreach(CardData handCard in me.CardsInHand)
@@ -164,6 +172,7 @@ internal class CardGame
                 }
                 break;
             case CardAction.Draw:
+                me.CardsInHand.Add(deck.GetNextCard());
                 break;
             case CardAction.LifeSteal:
                 me.CardsInHand[0].Health += 1;
