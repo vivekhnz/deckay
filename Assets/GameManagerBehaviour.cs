@@ -109,11 +109,14 @@ public class GameManagerBehaviour : MonoBehaviour
     private CardBehaviour DealCard(Deck deck, Vector2 position)
     {
         var cardObj = Instantiate(cardPrefab);
+        
+        // if opponent set as opponent panel 
         cardObj.transform.SetParent(playerHandPanel, false);
 
         var transform = cardObj.GetComponent<RectTransform>();
         transform.anchoredPosition = position;
 
+        // if opponent display back not front of card
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = deck.GetNextCard();
 
