@@ -58,34 +58,34 @@ internal class Deck
         // adding 2 of each
         for(int i = 0; i < 2; i++)
         {
-            cardList.Add( new CardData { Effect = CardAction.Refurbish, Health = rng.Next(3, 7)});
-            cardList.Add(new CardData { Effect = CardAction.WildCard, Health = rng.Next(3, 7) });
+            cardList.Add( new CardData { Effect = CardAction.Refurbish, Health = 2});
+            cardList.Add(new CardData { Effect = CardAction.WildCard, Health = 2 });
         }
 
         // adding 3 of each
         for (int i = 0; i < 3; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.ExtraTurn, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.Blind, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.ExtraTurn, Health = 5 });
+            cardList.Add(new CardData { Effect = CardAction.Blind, Health = 4 });
         }
 
         // adding 4 of each
         for (int i = 0; i < 4; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.DoubleTurn, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.LifeDrain, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.Draw, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.LifeSteal, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.Skip, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.DoubleTurn, Health = 5 });
+            cardList.Add(new CardData { Effect = CardAction.LifeDrain, Health = 3 });
+            cardList.Add(new CardData { Effect = CardAction.Draw, Health = 6 });
+            cardList.Add(new CardData { Effect = CardAction.LifeSteal, Health = 3 });
+            cardList.Add(new CardData { Effect = CardAction.Skip, Health = 3 });
         }
 
         // adding 5 of each
         for (int i = 0; i < 5; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.Agro, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.Steal, Health = rng.Next(3, 7) });
-            cardList.Add(new CardData { Effect = CardAction.Discard, Health = rng.Next(3, 7) });
+            cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = 4 });
+            cardList.Add(new CardData { Effect = CardAction.Agro, Health = 3 });
+            cardList.Add(new CardData { Effect = CardAction.Steal, Health = 2 });
+            cardList.Add(new CardData { Effect = CardAction.Discard, Health = 4 });
         }
 
         // check the whole deck was loaded correctly 
