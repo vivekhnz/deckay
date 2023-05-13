@@ -96,7 +96,7 @@ internal class CardGame
         {
             var card = actorState.CardsInHand[i];
             card.Health--;
-            if (card.Health == 0)
+            if (card.Health <= 0)
             {
                 removedCards.Add(card);
                 actorState.CardsInHand.RemoveAt(i);
