@@ -74,22 +74,73 @@ public class GameManagerBehaviour : MonoBehaviour
 
     void BeginPhase(GamePhase phase)
     {
+        var playerCardsToAdd = new List<CardData>();
+        var opponentCardsToAdd = new List<CardData>();
+        var cardsToDelete = new List<CardData>();
+
+        // logic pass
+
+        switch (phase)
+        {
+            case GamePhase.Dealing:
+                game.DealCards(initialHandSize);
+                playerCardsToAdd.AddRange(game.Player.CardsInHand);
+                opponentCardsToAdd.AddRange(game.Opponent.CardsInHand);
+                break;
+
+            case GamePhase.PlayerChoose:
+                // allow player to choose a card from their hand
+                break;
+
+            case GamePhase.PlayerExecute:
+                game.Execute(Actor.Player);
+                break;
+
+            case GamePhase.PlayerDecay:
+                cardsToDelete.AddRange(game.DecayCards(Actor.Player));
+                playerCardsToAdd.Add(game.PickUpCard(Actor.Player));
+                break;
+
+            case GamePhase.AiChoose:
+                // pretend that AI is picking a card
+                break;
+
+            case GamePhase.AiExecute:
+                // AI chooses a card
+                var selectedCard = game.Opponent.CardsInHand[0];
+                game.ChooseCard(Actor.Opponent, selectedCard);
+                cardsToDelete.Add(selectedCard);
+
+                // AI executes that card
+                game.Execute(Actor.Opponent);
+                break;
+
+            case GamePhase.AiDecay:
+                cardsToDelete.AddRange(game.DecayCards(Actor.Opponent));
+                opponentCardsToAdd.Add(game.PickUpCard(Actor.Opponent));
+                break;
+        }
+
+        // ui pass
+
+        foreach (var card in playerCardsToAdd)
+        {
+            CreatePlayerCardObject(card);
+        }
+        foreach (var card in opponentCardsToAdd)
+        {
+            CreateOpponentCardObject(card);
+        }
+        foreach (var card in cardsToDelete)
+        {
+            Destroy(cardObjByData[card].gameObject);
+            cardObjByData.Remove(card);
+        }
+
         currentPhaseText.text = $"Current phase: {phase}";
         switch (phase)
         {
             case GamePhase.Dealing:
-                cardObjByData.Clear();
-
-                game.DealCards(initialHandSize);
-                foreach (var card in game.Player.CardsInHand)
-                {
-                    CreatePlayerCardObject(card);
-                }
-                foreach (var card in game.Opponent.CardsInHand)
-                {
-                    CreateOpponentCardObject(card);
-                }
-
                 // todo: start deal animation
                 Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
@@ -99,27 +150,13 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.PlayerExecute:
-                game.Execute(Actor.Player);
-
                 // todo: start execute animation
                 Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
             case GamePhase.PlayerDecay:
-                {
-                    var expiredCards = game.DecayCards(Actor.Player);
-                    foreach (var card in expiredCards)
-                    {
-                        Destroy(cardObjByData[card].gameObject);
-                    }
-
-                    // pick up new card to player hand
-                    var cardData = game.PickUpCard(Actor.Player);
-                    CreatePlayerCardObject(cardData);
-
-                    // todo: start decay animation
-                    Invoke(nameof(MoveToNextPhase), 1.0f);
-                }
+                // todo: start decay animation
+                Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
             case GamePhase.AiChoose:
@@ -127,31 +164,13 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.AiExecute:
-                var selectedCard = game.Opponent.CardsInHand[0];
-                game.ChooseCard(Actor.Opponent, selectedCard);
-                Destroy(cardObjByData[selectedCard].gameObject);
-
-                game.Execute(Actor.Opponent);
-
                 // todo: start execute animation
                 Invoke(nameof(MoveToNextPhase), 3.0f);
                 break;
 
             case GamePhase.AiDecay:
-                {
-                    var expiredCards = game.DecayCards(Actor.Opponent);
-                    foreach (var card in expiredCards)
-                    {
-                        Destroy(cardObjByData[card].gameObject);
-                    }
-
-                    // pick up new card to ai hand
-                    var cardData = game.PickUpCard(Actor.Opponent);
-                    CreateOpponentCardObject(cardData);
-
-                    // todo: start decay animation
-                    Invoke(nameof(MoveToNextPhase), 1.0f);
-                }
+                // todo: start decay animation
+                Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
         }
     }
