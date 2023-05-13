@@ -3,6 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
+public enum GamePhase
+{
+    Startup = 0,
+    Dealing,
+    PlayerChoose,
+    PlayerExecute,
+    PlayerDecay,
+    AiChoose,
+    AiExecute,
+    AiDecay
+}
+
 public enum Actor
 {
     Player,
@@ -23,11 +35,12 @@ public class ActorState
 
 internal class CardGame
 {
+    private readonly Random rng;
+    private const int initialHandSize = 5;
+
     private Deck deck;
 
-
-    private readonly Random rng;
-
+    public GamePhase CurrentPhase;
     public ActorState Player;
     public ActorState Opponent;
 
@@ -35,8 +48,60 @@ internal class CardGame
 	{
         rng = new Random();
         deck = new Deck();
+        CurrentPhase = GamePhase.Startup;
         Player = new ActorState();
         Opponent = new ActorState();
+    }
+
+    internal void MoveToNextPhase()
+    {
+        if (CurrentPhase == GamePhase.AiDecay)
+        {
+            CurrentPhase = GamePhase.PlayerChoose;
+        }
+        else
+        {
+            CurrentPhase++;
+        }
+
+        // begin the next phase
+        switch (CurrentPhase)
+        {
+            case GamePhase.Dealing:
+                DealCards(initialHandSize);
+                break;
+
+            case GamePhase.PlayerChoose:
+                // allow player to choose a card from their hand
+                break;
+
+            case GamePhase.PlayerExecute:
+                Execute(Actor.Player);
+                break;
+
+            case GamePhase.PlayerDecay:
+                DecayCards(Actor.Player);
+                PickUpCard(Actor.Player);
+                break;
+
+            case GamePhase.AiChoose:
+                // pretend that AI is picking a card
+                break;
+
+            case GamePhase.AiExecute:
+                // AI chooses a card
+                var selectedCard = Opponent.CardsInHand[0];
+                ChooseCard(Actor.Opponent, selectedCard);
+
+                // AI executes that card
+                Execute(Actor.Opponent);
+                break;
+
+            case GamePhase.AiDecay:
+                DecayCards(Actor.Opponent);
+                PickUpCard(Actor.Opponent);
+                break;
+        }
     }
 
     internal void DealCards(int cardsPerHand)

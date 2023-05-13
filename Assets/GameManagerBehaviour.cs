@@ -2,23 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
 using System.Linq;
-
-public enum GamePhase
-{
-    Dealing = 0,
-    PlayerChoose,
-    PlayerExecute,
-    PlayerDecay,
-    AiChoose,
-    AiExecute,
-    AiDecay
-}
 
 public class GameManagerBehaviour : MonoBehaviour
 {
-    public int initialHandSize = 5;
     public GameObject cardPrefab;
     public Transform rootCanvas;
     public Transform playerHandPanel;
@@ -30,7 +17,6 @@ public class GameManagerBehaviour : MonoBehaviour
 
     private CardGame game;
 
-    private GamePhase currentPhase;
     private Dictionary<CardData, CardBehaviour> cardObjByData = new Dictionary<CardData, CardBehaviour>();
 
     // Start is called before the first frame update
@@ -38,43 +24,10 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         game = new CardGame();
 
-        currentPhase = GamePhase.Dealing;
-        BeginPhase(currentPhase);
-    }
-
-    public void MoveToNextPhase()
-    {
-        if (currentPhase == GamePhase.AiDecay)
-        {
-            currentPhase = GamePhase.PlayerChoose;
-        }
-        else
-        {
-            currentPhase++;
-        }
-
-        BeginPhase(currentPhase);
-    }
-
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void ChooseCardFromPlayerHand(CardBehaviour card)
-    {
-        if (currentPhase != GamePhase.PlayerChoose)
-        {
-            // ignore click if we're not in the choose phase
-            return;
-        }
-
-        game.ChooseCard(Actor.Player, card.data);
-        Destroy(card.gameObject);
         MoveToNextPhase();
     }
 
-    void BeginPhase(GamePhase phase)
+    public void MoveToNextPhase()
     {
         // shallow-copy cards before game logic executes
         // we'll diff afterwards and update the UI accordingly
@@ -82,43 +35,7 @@ public class GameManagerBehaviour : MonoBehaviour
         var opponentCardsBefore = new List<CardData>(game.Opponent.CardsInHand);
 
         // update game simulation
-        switch (phase)
-        {
-            case GamePhase.Dealing:
-                game.DealCards(initialHandSize);
-                break;
-
-            case GamePhase.PlayerChoose:
-                // allow player to choose a card from their hand
-                break;
-
-            case GamePhase.PlayerExecute:
-                game.Execute(Actor.Player);
-                break;
-
-            case GamePhase.PlayerDecay:
-                game.DecayCards(Actor.Player);
-                game.PickUpCard(Actor.Player);
-                break;
-
-            case GamePhase.AiChoose:
-                // pretend that AI is picking a card
-                break;
-
-            case GamePhase.AiExecute:
-                // AI chooses a card
-                var selectedCard = game.Opponent.CardsInHand[0];
-                game.ChooseCard(Actor.Opponent, selectedCard);
-
-                // AI executes that card
-                game.Execute(Actor.Opponent);
-                break;
-
-            case GamePhase.AiDecay:
-                game.DecayCards(Actor.Opponent);
-                game.PickUpCard(Actor.Opponent);
-                break;
-        }
+        game.MoveToNextPhase();
 
         // diff cards to determine what UI updates to make
         var playerCardsToAdd = game.Player.CardsInHand.Where(card => !playerCardsBefore.Contains(card));
@@ -142,8 +59,8 @@ public class GameManagerBehaviour : MonoBehaviour
             cardObjByData.Remove(card);
         }
 
-        currentPhaseText.text = $"Current phase: {phase}";
-        switch (phase)
+        currentPhaseText.text = $"Current phase: {game.CurrentPhase}";
+        switch (game.CurrentPhase)
         {
             case GamePhase.Dealing:
                 // todo: start deal animation
@@ -180,6 +97,20 @@ public class GameManagerBehaviour : MonoBehaviour
         }
     }
 
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ChooseCardFromPlayerHand(CardBehaviour card)
+    {
+        Debug.Assert(game.CurrentPhase == GamePhase.PlayerChoose);
+
+        game.ChooseCard(Actor.Player, card.data);
+        Destroy(card.gameObject);
+        MoveToNextPhase();
+    }
+
     private void CreatePlayerCardObject(CardData cardData)
     {
         var cardObj = Instantiate(cardPrefab, playerHandPanel, false);
@@ -189,7 +120,7 @@ public class GameManagerBehaviour : MonoBehaviour
 
         card.onClickAction.AddListener(() =>
         {
-            if (currentPhase == GamePhase.PlayerChoose)
+            if (game.CurrentPhase == GamePhase.PlayerChoose)
             {
                 ChooseCardFromPlayerHand(card);
             }
@@ -207,9 +138,10 @@ public class GameManagerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentPhase == GamePhase.PlayerExecute || currentPhase == GamePhase.AiExecute)
+        GamePhase phase = game.CurrentPhase;
+        if (phase == GamePhase.PlayerExecute || phase == GamePhase.AiExecute)
         {
-            if (currentPhase == GamePhase.PlayerExecute)
+            if (phase == GamePhase.PlayerExecute)
             {
                 executingPlayerText.text = "You played";
                 executingCard.data = game.Player.SelectedCard;
@@ -230,7 +162,7 @@ public class GameManagerBehaviour : MonoBehaviour
         }
 
         Actor? winner = null;
-        if (currentPhase != GamePhase.Dealing)
+        if (phase != GamePhase.Dealing)
         {
             if (game.Opponent.CardsInHand.Count == 0)
             {
