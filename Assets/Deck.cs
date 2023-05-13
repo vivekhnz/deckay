@@ -4,18 +4,31 @@ using Random = System.Random;
 
 public enum CardAction
 {
+    /// <summary>Your opponent must take two turns.</summary>
     DoubleTurn = 0,
+    /// <summary>Your opponent must discard 1 card from their hand.</summary>
     Discard,
+    /// <summary>You must take an extra turn.</summary>
     ExtraTurn,
+    /// <summary>One random card from your hand is hidden from view.</summary>
     Blind,
+    /// <summary>Steal 1 random card from your opponent's hand.</summary>
     Steal,
+    /// <summary>You lose 1 life from each of the cards in your hand.</summary>
     LifeDrain,
+    /// <summary>Take 2 life from one of your opponent's cards.</summary>
     Agro,
+    /// <summary>Your opponent loses 1 life from each of the cards in their hand.</summary>
     TakeLifeForce,
+    /// <summary>You may draw an extra card at the end of your turn.</summary>
     Draw,
+    /// <summary>Take 1 life from your opponent's card and add it to one of your own.</summary>
     LifeSteal,
+    /// <summary>You do not lose any life this turn.</summary>
     Skip,
+    /// <summary>One card in your hand gains 2 life.</summary>
     Refurbish,
+    /// <summary>Fate will decide...</summary>
     WildCard
 }
 
