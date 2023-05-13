@@ -15,6 +15,7 @@ public class GameManagerBehaviour : MonoBehaviour
 {
     public GameObject cardPrefab;
     public Transform rootCanvas;
+    public Transform playerHandPanel;
     public Text currentPhaseText;
 
     private Deck deck;
@@ -74,7 +75,7 @@ public class GameManagerBehaviour : MonoBehaviour
     private void DealCard(Deck deck, Vector2 position)
     {
         var cardObj = Instantiate(cardPrefab);
-        cardObj.transform.SetParent(rootCanvas, false);
+        cardObj.transform.SetParent(playerHandPanel, false);
 
         var transform = cardObj.GetComponent<RectTransform>();
         transform.anchoredPosition = position;
