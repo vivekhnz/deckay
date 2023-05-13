@@ -17,19 +17,14 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform rootCanvas;
     public Text currentPhaseText;
 
+    private Deck deck;
     private GamePhase currentPhase;
 
     // Start is called before the first frame update
     void Start()
     {
         currentPhase = GamePhase.Dealing;
-        currentPhaseText.text = $"Current phase: {currentPhase}";
-
-        var deck = new Deck();
-        for (int i = 0; i < 5; i++)
-        {
-            DealCard(deck, new Vector2(i * 75, 0));
-        }
+        BeginPhase(currentPhase);
     }
 
     public void MoveToNextPhase()
@@ -43,7 +38,37 @@ public class GameManagerBehaviour : MonoBehaviour
             currentPhase++;
         }
 
-        currentPhaseText.text = $"Current phase: {currentPhase}";
+        BeginPhase(currentPhase);
+    }
+
+    void BeginPhase(GamePhase phase)
+    {
+        currentPhaseText.text = $"Current phase: {phase}";
+        switch (phase)
+        {
+            case GamePhase.Dealing:
+                deck = new Deck();
+                for (int i = 0; i < 5; i++)
+                {
+                    DealCard(deck, new Vector2(i * 75, 0));
+                }
+                break;
+
+            case GamePhase.PlayerChoose:
+                break;
+
+            case GamePhase.PlayerExecute:
+                break;
+
+            case GamePhase.AiChoose:
+                break;
+
+            case GamePhase.AiExecute:
+                break;
+
+            case GamePhase.Decay:
+                break;
+        }
     }
 
     private void DealCard(Deck deck, Vector2 position)
