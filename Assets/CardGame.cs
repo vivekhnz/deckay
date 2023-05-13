@@ -173,7 +173,7 @@ internal class CardGame
 
             case GamePhase.AiExecute:
                 // AI chooses a card
-                var selectedCard = Opponent.CardsInHand[0];
+                var selectedCard = RandomCard(Opponent.CardsInHand);
                 ChooseCard(Actor.Opponent, selectedCard);
 
                 // AI executes that card
