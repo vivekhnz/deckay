@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum GamePhase
 {
@@ -22,6 +23,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform opponentHandPanel;
     public Text currentPhaseText;
     public Text executingPlayerText;
+    public Text winConditionText;
     public CardBehaviour executingCard;
 
     private CardGame game;
@@ -57,6 +59,19 @@ public class GameManagerBehaviour : MonoBehaviour
         BeginPhase(currentPhase);
     }
 
+    public void GameOver(bool win)
+    {
+        winConditionText.text = $"You {(win ? "Win" : "Lose")}";
+        winConditionText.gameObject.SetActive(true);
+
+        Invoke(nameof(RestartGame), 3.0f);
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public void ChooseCardFromPlayerHand(CardBehaviour card)
     {
         if (currentPhase != GamePhase.PlayerChoose)
@@ -80,6 +95,16 @@ public class GameManagerBehaviour : MonoBehaviour
             case GamePhase.Dealing:
                 cardObjByData.Clear();
 
+                winConditionText.gameObject.SetActive(false);
+                executingPlayerText.gameObject.SetActive(false);
+                executingCard.gameObject.SetActive(false);
+
+                //playerHand.Clear();
+
+                bool playerDeal = true;
+
+                // replace for loop with card count possibly. 
+                //for (int i = 0; i < handSize; i++)
                 game.DealCards(initialHandSize);
                 foreach (var card in game.PlayerHand)
                 {
@@ -222,6 +247,10 @@ public class GameManagerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (currentPhase != GamePhase.Dealing)
+        {
+            if (game.PlayerHand.Count == 0) { GameOver(true); }
+            else if (game.OpponentHand.Count == 0) { GameOver(false); }
+        }
     }
 }
