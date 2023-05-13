@@ -5,8 +5,7 @@ public class CardBehaviour : MonoBehaviour
 {
     public Text healthText;
     public Text effectText;
-    public int health = 5;
-    public string effect = "Nuetral";
+    public CardData data;
 
     // Start is called before the first frame update
     void Start()
@@ -15,14 +14,14 @@ public class CardBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        healthText.text = $"HP: {health}";
-        effectText.text = $"Effect: {effect}";
+        healthText.text = $"HP: {data.health}";
+        effectText.text = $"Effect: {data.effect}";
     }
 
     // Update is called once per frame
     void Update()
     {
-        healthText.text = $"HP: {health}";
-        effectText.text = $"Effect: {effect}";
+        healthText.text = $"HP: {data.health}";
+        effectText.text = $"Effect: {data.effect}";
     }
 }
