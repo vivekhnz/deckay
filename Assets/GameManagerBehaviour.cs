@@ -54,14 +54,6 @@ public class GameManagerBehaviour : MonoBehaviour
         BeginPhase(currentPhase);
     }
 
-    public void GameOver(bool win)
-    {
-        winConditionText.text = $"You {(win ? "Win" : "Lose")}";
-        winConditionText.gameObject.SetActive(true);
-
-        Invoke(nameof(RestartGame), 3.0f);
-    }
-
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -87,8 +79,6 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             case GamePhase.Dealing:
                 cardObjByData.Clear();
-
-                winConditionText.gameObject.SetActive(false);
 
                 game.DealCards(initialHandSize);
                 foreach (var card in game.Player.CardsInHand)
@@ -218,10 +208,30 @@ public class GameManagerBehaviour : MonoBehaviour
             executingCard.gameObject.SetActive(false);
         }
 
+        Actor? winner = null;
         if (currentPhase != GamePhase.Dealing)
         {
-            if (game.Opponent.CardsInHand.Count == 0) { GameOver(true); }
-            else if (game.Player.CardsInHand.Count == 0) { GameOver(false); }
+            if (game.Opponent.CardsInHand.Count == 0)
+            {
+                winner = Actor.Player;
+            }
+            else if (game.Player.CardsInHand.Count == 0)
+            {
+                winner = Actor.Opponent;
+            }
+        }
+        if (winner.HasValue)
+        {
+            bool win = winner.Value == Actor.Player;
+            winConditionText.text = $"You {(win ? "Win" : "Lose")}";
+            winConditionText.gameObject.SetActive(true);
+
+            // todo: don't fire this every frame
+            Invoke(nameof(RestartGame), 3.0f);
+        }
+        else
+        {
+            winConditionText.gameObject.SetActive(false);
         }
     }
 }
