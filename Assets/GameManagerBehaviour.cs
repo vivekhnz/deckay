@@ -7,9 +7,10 @@ public enum GamePhase
     Dealing = 0,
     PlayerChoose,
     PlayerExecute,
+    PlayerDecay,
     AiChoose,
     AiExecute,
-    Decay
+    AiDecay
 }
 
 public class GameManagerBehaviour : MonoBehaviour
@@ -25,6 +26,7 @@ public class GameManagerBehaviour : MonoBehaviour
     private GamePhase currentPhase;
     private List<CardBehaviour> playerHand = new List<CardBehaviour>();
     private List<CardBehaviour> opponentHand = new List<CardBehaviour>();
+    List<CardBehaviour> toRemove = new List<CardBehaviour>();
     private CardBehaviour playerChosenCard = null;
     private CardBehaviour opponentChosenCard = null;
 
@@ -37,7 +39,7 @@ public class GameManagerBehaviour : MonoBehaviour
 
     public void MoveToNextPhase()
     {
-        if (currentPhase == GamePhase.Decay)
+        if (currentPhase == GamePhase.AiDecay)
         {
             currentPhase = GamePhase.PlayerChoose;
         }
@@ -72,7 +74,7 @@ public class GameManagerBehaviour : MonoBehaviour
                 for (int i = 0; i < handSize; i++)
                 {
                     CardBehaviour card;
-                    
+
                     if (i % 2 == 1)
                     {
                         card = DealCard(deck, new Vector2(((i * 50) + 50), 0), playerDeal);
@@ -105,18 +107,35 @@ public class GameManagerBehaviour : MonoBehaviour
 
             case GamePhase.PlayerChoose:
                 // todo: allow player to choose a card from their hand
-                for(int i = 0; i < handSize; i++)
+                foreach (var card in playerHand)
                 {
-                    playerHand[i].isClickable = true;
+                    card.isClickable = true;
                 }
                 playerChosenCard = playerHand[0];
                 break;
 
             case GamePhase.PlayerExecute:
                 ExecuteCard(playerChosenCard, true);
-                for (int i = 0; i < handSize; i++)
+                foreach (var card in playerHand)
                 {
-                    playerHand[i].isClickable = false;
+                    card.isClickable = false;
+                }
+                break;
+
+            case GamePhase.PlayerDecay:
+                toRemove.Clear();
+                foreach (var card in playerHand)
+                {
+                    card.data.Health--;
+                    if (card.data.Health == 0)
+                    {
+                        toRemove.Add(card);
+                    }
+                }
+                foreach (var card in toRemove)
+                {
+                    playerHand.Remove(card);
+                    Destroy(card.gameObject);
                 }
                 break;
 
@@ -129,20 +148,7 @@ public class GameManagerBehaviour : MonoBehaviour
                 ExecuteCard(opponentChosenCard, false);
                 break;
 
-            case GamePhase.Decay:
-                List<CardBehaviour> toRemove = new List<CardBehaviour>();
-                foreach (var card in playerHand)
-                {
-                    card.data.Health--;
-                    if(card.data.Health == 0)
-                    {
-                        toRemove.Add(card);
-                    }
-                }
-                foreach (var card in toRemove)
-                {
-                    playerHand.Remove(card);
-                }
+            case GamePhase.AiDecay or GamePhase.PlayerDecay:
                 toRemove.Clear();
                 foreach (var card in opponentHand)
                 {
@@ -155,6 +161,7 @@ public class GameManagerBehaviour : MonoBehaviour
                 foreach (var card in toRemove)
                 {
                     opponentHand.Remove(card);
+                    Destroy(card.gameObject);
                 }
 
 
@@ -211,6 +218,6 @@ public class GameManagerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

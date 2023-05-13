@@ -44,5 +44,6 @@ public class CardBehaviour : MonoBehaviour
     void Discard()
     {
         gameObject.SetActive(false);
+
     }
 }
