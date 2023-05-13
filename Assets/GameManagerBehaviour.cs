@@ -56,18 +56,23 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.PlayerChoose:
+                // todo: allow player to choose a card from their hand
                 break;
 
             case GamePhase.PlayerExecute:
+                // todo: run animation for the player's chosen card
                 break;
 
             case GamePhase.AiChoose:
+                // todo: AI picks a card from their hand
                 break;
 
             case GamePhase.AiExecute:
+                // todo: run animation for the AI's chosen card
                 break;
 
             case GamePhase.Decay:
+                // todo: decay all cards in hand
                 break;
         }
     }
