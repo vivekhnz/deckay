@@ -302,64 +302,93 @@ internal class CardGame
         switch (card.Effect)
         {
             case CardAction.DoubleTurn:
-                gameFlowModifiers.Add(opponent.Actor == Actor.Player
-                    ? GameFlowModifier.Player_TakesExtraTurn
-                    : GameFlowModifier.Opponent_TakesExtraTurn);
-                break;
-            case CardAction.Discard:
-                CardData removedCard = opponent.CardsInHand[0];
-                opponent.CardsInHand.Remove(removedCard);
-                break;
-            case CardAction.ExtraTurn:
-                gameFlowModifiers.Add(me.Actor == Actor.Player
-                    ? GameFlowModifier.Player_TakesExtraTurn
-                    : GameFlowModifier.Opponent_TakesExtraTurn);
-                break;
-            case CardAction.Blind:
-                CardData blindCard = opponent.CardsInHand[0];
-                blindCard.IsFaceDown = blindCard.IsFaceDown ? false : true;
-                break;
-            case CardAction.Steal:
-                CardData oppCard = opponent.CardsInHand[0];
-                CardData stolenCard = new CardData { Health = oppCard.Health, Effect = oppCard.Effect, IsFaceDown = oppCard.IsFaceDown ? false : true };
-                opponent.CardsInHand.Remove(oppCard);
-                me.CardsInHand.Add(stolenCard);
-                break;
-            case CardAction.LifeDrain:
-                foreach(CardData handCard in me.CardsInHand)
                 {
-                    handCard.Health = handCard.Health - 1;
+                    gameFlowModifiers.Add(opponent.Actor == Actor.Player
+                        ? GameFlowModifier.Player_TakesExtraTurn
+                        : GameFlowModifier.Opponent_TakesExtraTurn);
                 }
                 break;
-            case CardAction.Agro:
-                CardData selectedCard = opponent.CardsInHand[0];
-                selectedCard.Health = selectedCard.Health - 2;
+            case CardAction.Discard:
+                {
+                    var targetCard = RandomCard(opponent.CardsInHand);
+                    opponent.CardsInHand.Remove(targetCard);
+                }
+                break;
+            case CardAction.ExtraTurn:
+                {
+                    gameFlowModifiers.Add(me.Actor == Actor.Player
+                        ? GameFlowModifier.Player_TakesExtraTurn
+                        : GameFlowModifier.Opponent_TakesExtraTurn);
+                }
+                break;
+            case CardAction.Blind:
+                {
+                    var targetCard = RandomCard(opponent.CardsInHand);
+                    targetCard.IsFaceDown = !targetCard.IsFaceDown;
+                }
+                break;
+            case CardAction.Steal:
+                {
+                    var targetCard = RandomCard(opponent.CardsInHand);
+                    opponent.CardsInHand.Remove(targetCard);
+                    me.CardsInHand.Add(targetCard);
+
+                    targetCard.IsFaceDown = me.Actor == Actor.Player ? false : true;
+                }
+                break;
+            case CardAction.LifeDrain:
+                {
+                    foreach (var cardInHand in me.CardsInHand)
+                    {
+                        cardInHand.Health--;
+                    }
+                }
+                break;
+            case CardAction.Aggro:
+                {
+                    var targetCard = RandomCard(opponent.CardsInHand);
+                    targetCard.Health -= 2;
+                }
                 break;
             case CardAction.TakeLifeForce:
-                foreach (CardData handCard in opponent.CardsInHand)
                 {
-                    handCard.Health = handCard.Health - 1;
+                    foreach (var cardInHand in opponent.CardsInHand)
+                    {
+                        cardInHand.Health--;
+                    }
                 }
                 break;
             case CardAction.Draw:
-                gameFlowModifiers.Add(me.Actor == Actor.Player
-                    ? GameFlowModifier.Player_DrawBonusCard
-                    : GameFlowModifier.Opponent_DrawBonusCard);
+                {
+                    gameFlowModifiers.Add(me.Actor == Actor.Player
+                        ? GameFlowModifier.Player_DrawBonusCard
+                        : GameFlowModifier.Opponent_DrawBonusCard);
+                }
                 break;
             case CardAction.LifeSteal:
-                me.CardsInHand[0].Health += 1;
-                opponent.CardsInHand[0].Health -= 1;
+                {
+                    RandomCard(opponent.CardsInHand).Health--;
+                    RandomCard(me.CardsInHand).Health++;
+                }
                 break;
             case CardAction.Skip:
-                gameFlowModifiers.Add(me.Actor == Actor.Player
-                    ? GameFlowModifier.Player_SkipDecay
-                    : GameFlowModifier.Opponent_SkipDecay);
+                {
+                    gameFlowModifiers.Add(me.Actor == Actor.Player
+                        ? GameFlowModifier.Player_SkipDecay
+                        : GameFlowModifier.Opponent_SkipDecay);
+                }
                 break;
             case CardAction.Refurbish:
-                me.CardsInHand[0].Health += 2;
+                {
+                    var targetCard = RandomCard(me.CardsInHand);
+                    targetCard.Health += 2;
+                }
                 break;
             case CardAction.WildCard:
-                int roll = rng.Next(1, 7);
+                {
+                    int roll = rng.Next(1, 7);
+                    // todo: implement wildcard
+                }
                 break;
         }
 
@@ -377,5 +406,10 @@ internal class CardGame
             default:
                 throw new NotImplementedException();
         }
+    }
+
+    private CardData RandomCard(List<CardData> choices)
+    {
+        return choices[rng.Next(0, choices.Count)];
     }
 }

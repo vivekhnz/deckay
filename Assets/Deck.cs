@@ -17,7 +17,7 @@ public enum CardAction
     /// <summary>You lose 1 life from each of the cards in your hand.</summary>
     LifeDrain,
     /// <summary>Take 2 life from one of your opponent's cards.</summary>
-    Agro,
+    Aggro,
     /// <summary>Your opponent loses 1 life from each of the cards in their hand.</summary>
     TakeLifeForce,
     /// <summary>You may draw an extra card at the end of your turn.</summary>
@@ -96,7 +96,7 @@ internal class Deck
         for (int i = 0; i < 5; i++)
         {
             cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = 4 });
-            cardList.Add(new CardData { Effect = CardAction.Agro, Health = 3 });
+            cardList.Add(new CardData { Effect = CardAction.Aggro, Health = 3 });
             cardList.Add(new CardData { Effect = CardAction.Steal, Health = 2 });
             cardList.Add(new CardData { Effect = CardAction.Discard, Health = 4 });
         }

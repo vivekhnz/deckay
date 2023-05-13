@@ -38,13 +38,18 @@ public class GameManagerBehaviour : MonoBehaviour
         game.MoveToNextPhase();
 
         // diff cards to determine what UI updates to make
-        var playerCardsToAdd = game.Player.CardsInHand.Where(card => !playerCardsBefore.Contains(card));
-        var opponentCardsToAdd = game.Opponent.CardsInHand.Where(card => !opponentCardsBefore.Contains(card));
+        var playerCardsToAdd = game.Player.CardsInHand.Where(card => !playerCardsBefore.Contains(card)).ToList();
+        var opponentCardsToAdd = game.Opponent.CardsInHand.Where(card => !opponentCardsBefore.Contains(card)).ToList();
         var cardsToDelete = new List<CardData>();
         cardsToDelete.AddRange(playerCardsBefore.Where(card => !game.Player.CardsInHand.Contains(card)));
         cardsToDelete.AddRange(opponentCardsBefore.Where(card => !game.Opponent.CardsInHand.Contains(card)));
 
         // update UI
+        foreach (var card in cardsToDelete)
+        {
+            Destroy(cardObjByData[card].gameObject);
+            cardObjByData.Remove(card);
+        }
         foreach (var card in playerCardsToAdd)
         {
             CreatePlayerCardObject(card);
@@ -52,11 +57,6 @@ public class GameManagerBehaviour : MonoBehaviour
         foreach (var card in opponentCardsToAdd)
         {
             CreateOpponentCardObject(card);
-        }
-        foreach (var card in cardsToDelete)
-        {
-            Destroy(cardObjByData[card].gameObject);
-            cardObjByData.Remove(card);
         }
 
         currentPhaseText.text = $"Current phase: {game.CurrentPhase}";
