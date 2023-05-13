@@ -56,7 +56,7 @@ internal class CardGame
     private const int initialHandSize = 5;
 
     private Deck deck;
-    private HashSet<GameFlowModifier> gameFlowModifiers;
+    private List<GameFlowModifier> gameFlowModifiers;
 
     public GamePhase CurrentPhase;
     public ActorState Player;
@@ -68,7 +68,7 @@ internal class CardGame
         
         deck = new Deck();
 
-        gameFlowModifiers = new HashSet<GameFlowModifier>();
+        gameFlowModifiers = new List<GameFlowModifier>();
 
         CurrentPhase = GamePhase.Startup;
         Player = new ActorState(Actor.Player);
@@ -106,6 +106,10 @@ internal class CardGame
             case GamePhase.PlayerDecay:
                 return GamePhase.PlayerPickUp;
             case GamePhase.PlayerPickUp:
+                if (UseFlowModifierIfActive(GameFlowModifier.Player_TakesExtraTurn))
+                {
+                    return GamePhase.PlayerChoose;
+                }
                 return GamePhase.AiChoose;
 
             case GamePhase.AiChoose:
@@ -119,6 +123,10 @@ internal class CardGame
             case GamePhase.AiDecay:
                 return GamePhase.AiPickUp;
             case GamePhase.AiPickUp:
+                if (UseFlowModifierIfActive(GameFlowModifier.Opponent_TakesExtraTurn))
+                {
+                    return GamePhase.AiChoose;
+                }
                 return GamePhase.PlayerChoose;
         }
 
@@ -323,7 +331,7 @@ internal class CardGame
                 }
                 break;
             case CardAction.Draw:
-                me.CardsInHand.Add(deck.GetNextCard());
+                PickUpCard(me.Actor);
                 break;
             case CardAction.LifeSteal:
                 me.CardsInHand[0].Health += 1;
