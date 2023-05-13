@@ -49,9 +49,18 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             case GamePhase.Dealing:
                 deck = new Deck();
+
+                // replace for loop with card count possibly. 
                 for (int i = 0; i < 5; i++)
                 {
-                    DealCard(deck, new Vector2(i * 75, 0));
+                    if (i % 2 == 1)
+                    {
+                        DealCard(deck, new Vector2(((i * 50) + 50), 0));
+                    }
+                    else
+                    {
+                        DealCard(deck, new Vector2(i * -50, 0));
+                    } 
                 }
                 break;
 
