@@ -171,6 +171,7 @@ public class GameManagerBehaviour : MonoBehaviour
         var cardObj = Instantiate(cardPrefab, playerHandPanel, false);
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = cardData;
+        cardData.DestroyEffect = CardDestroyEffect.None;
         cardObjByData[cardData] = card;
 
         card.onClickAction.AddListener(() =>

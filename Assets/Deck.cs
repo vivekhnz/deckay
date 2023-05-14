@@ -61,7 +61,7 @@ internal class Deck
 
     public void shuffle()
     {
-        for(int i = 0; i < cardList.Count; i++)
+        for (int i = 0; i < cardList.Count; i++)
         {
             CardData temp = cardList[i];
             int randomIndex = rng.Next(i, cardList.Count);
@@ -119,7 +119,7 @@ internal class Deck
     public CardData GetNextCard() // have player hand collection as argument
     {
         // if deck stack is empty call reshuffle
-        if(topOfDeck == cardList.Count)
+        if (topOfDeck == cardList.Count)
         {
             topOfDeck = 0;
             fillDeck();
