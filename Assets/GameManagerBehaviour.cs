@@ -234,4 +234,8 @@ public class GameManagerBehaviour : MonoBehaviour
             winConditionText.gameObject.SetActive(false);
         }
     }
+    public void GoBack()
+    {
+        SceneManager.LoadScene("TitleScreen");
+    }
 }

@@ -34,7 +34,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        //PlaySound("Insert Theme");
+        PlaySound("MagicEscapeRoom");
     }
 
     public void PlaySound(string name)
