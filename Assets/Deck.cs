@@ -131,8 +131,6 @@ internal class Deck
                 return "Your opponent must play two cards.";
             case CardAction.Discard:
                 return "Your opponent must discard one card from their hand";
-            case CardAction.ExtraTurn:
-                return "You must take an extra turn";
             case CardAction.Blind:
                 return "One random card from the opponents hand is hidden from view";
             case CardAction.Steal:
