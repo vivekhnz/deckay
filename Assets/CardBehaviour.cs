@@ -11,7 +11,9 @@ public class CardBehaviour : MonoBehaviour
     public Sprite cardFront;
     public Sprite cardBack;
     public Sprite cardWildcard;
-    public Sprite[] sprites;
+    public Sprite[] cardInfo;
+    public Sprite[] decaying;
+    public Sprite[] icons;
     private Image image;
 
     // Start is called before the first frame update
@@ -31,7 +33,7 @@ public class CardBehaviour : MonoBehaviour
     {
         healthText.text = data.Health.ToString();
         effect = data.Effect;
-        cardFront = data.IsWildcard ? cardWildcard : sprites[(int)effect];
+        cardFront = data.IsWildcard ? cardWildcard : cardInfo[(int)effect];
         image.sprite = data.IsFaceDown ? cardBack : cardFront;
     }
 
