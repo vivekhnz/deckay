@@ -1004,6 +1004,183 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250515422}
   m_CullTransparentMesh: 1
+--- !u!1 &1281310286
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1281310288}
+  - component: {fileID: 1281310287}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1281310287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281310286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b52be431ebb1d4c4fa9019d8e834acab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Begin
+    clip: {fileID: 8300000, guid: 6518ee3627f5a5440a3b06b3e4ff73ff, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Blind
+    clip: {fileID: 8300000, guid: b94c0d7970868c948978c7cfc170ad41, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Bloom
+    clip: {fileID: 8300000, guid: 4e54c56fbb55da3438dfa176fbe7aa4b, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Curse
+    clip: {fileID: 8300000, guid: 75b5ef62534b65c4c8905c7cd0778b67, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: FateWillDecide
+    clip: {fileID: 8300000, guid: 38276005241fc58438255cf13823e199, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: FateWillDecide1
+    clip: {fileID: 8300000, guid: 6de7b91c5468937408bc7883d19e7805, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Fever
+    clip: {fileID: 8300000, guid: f8e7dde834fdf754498a314a50da2de2, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: c81783861a247b54a815c837dc4726d6, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: GhostBreath
+    clip: {fileID: 8300000, guid: c5e7eb0c4ab80d04b96bd8e4bc225d7e, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Leech
+    clip: {fileID: 8300000, guid: 9b65b6fc96614704eb1f19c9002a2d95, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Necrosis
+    clip: {fileID: 8300000, guid: d28a80132f432b14398dddbdf5a34243, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: NotToday
+    clip: {fileID: 8300000, guid: d89c100c8f28857438df780d8d079a25, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: OldManDying
+    clip: {fileID: 8300000, guid: 563d590ada028af4599940c033f6b721, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Pickpocket
+    clip: {fileID: 8300000, guid: 31a0c103212aab242bbf698ba7ee512e, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Plague
+    clip: {fileID: 8300000, guid: 2c6d46a54a1bf1a43a630d90d01f02dd, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Restore
+    clip: {fileID: 8300000, guid: 5879bd0db54bf9f4d9ad96976a1424d9, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Rot
+    clip: {fileID: 8300000, guid: f1e049e0a6406e4449381cf9401d470e, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Stasis
+    clip: {fileID: 8300000, guid: fc68153d90fdff644a7d00e2b71b8c3f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: WildCard
+    clip: {fileID: 8300000, guid: beff60784a5d2d2478aad39f9d52cfda, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: YouLose
+    clip: {fileID: 8300000, guid: 3e923b6a58430e34bbeca40ed1690fa2, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: YouWin
+    clip: {fileID: 8300000, guid: a6ed1a269897a5045b6c006baadc3d79, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: MagicEscapeRoom
+    clip: {fileID: 8300000, guid: b57b6c857ae385046b7e1199a57f6779, type: 3}
+    volume: 0.064
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+--- !u!4 &1281310288
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281310286}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 881.75195, y: 614.3137, z: -11.085286}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1324287134
 GameObject:
   m_ObjectHideFlags: 0

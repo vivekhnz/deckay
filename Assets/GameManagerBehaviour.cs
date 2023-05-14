@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System;
 
 public class GameManagerBehaviour : MonoBehaviour
 {
@@ -27,11 +28,15 @@ public class GameManagerBehaviour : MonoBehaviour
     void Start()
     {
         game = new CardGame();
-
         MoveToNextPhase();
     }
 
-    public void MoveToNextPhase()
+    private void MoveToNextPhase()
+    {
+        UpdateGameScene(game => game.MoveToNextPhase());
+    }
+
+    private void UpdateGameScene(Action<CardGame> updateSim)
     {
         // shallow-copy cards before game logic executes
         // we'll diff afterwards and update the UI accordingly
@@ -39,7 +44,7 @@ public class GameManagerBehaviour : MonoBehaviour
         var opponentCardsBefore = new List<CardData>(game.Opponent.CardsInHand);
 
         // update game simulation
-        game.MoveToNextPhase();
+        updateSim(game);
 
         // diff cards to determine what UI updates to make
         var playerCardsToAdd = game.Player.CardsInHand.Where(card => !playerCardsBefore.Contains(card)).ToList();
@@ -51,8 +56,16 @@ public class GameManagerBehaviour : MonoBehaviour
         // update UI
         foreach (var card in cardsToDelete)
         {
-            Destroy(cardObjByData[card].gameObject);
-            cardObjByData.Remove(card);
+            if (cardObjByData.ContainsKey(card))
+            {
+                Debug.Log($"Start destroy card {card.DisplayName} @ {card.Health}HP (effect = {card.DestroyEffect})");
+                var cardObj = cardObjByData[card];
+                cardObj.Animate(card.DestroyEffect, DestroyCard);
+            }
+            else
+            {
+                Debug.LogWarning($"Card missing from lookup: {card.DisplayName} @ {card.Health}HP (effect = {card.DestroyEffect})");
+            }
         }
         foreach (var card in playerCardsToAdd)
         {
@@ -121,9 +134,11 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         Debug.Assert(game.CurrentPhase == GamePhase.PlayerChoose);
 
-        game.ChooseCard(Actor.Player, card.data);
-        Destroy(card.gameObject);
-        MoveToNextPhase();
+        UpdateGameScene(game =>
+        {
+            game.ChooseCard(Actor.Player, card.data);
+            game.MoveToNextPhase();
+        });
     }
 
     private void CreatePlayerCardObject(CardData cardData)
@@ -148,6 +163,13 @@ public class GameManagerBehaviour : MonoBehaviour
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = cardData;
         cardObjByData[cardData] = card;
+    }
+
+    private void DestroyCard(CardBehaviour card)
+    {
+        Debug.Log($"End destroy card {card.data.DisplayName} @ {card.data.Health}HP (effect = {card.data.DestroyEffect})");
+        Destroy(card.gameObject);
+        cardObjByData.Remove(card.data);
     }
 
     // Update is called once per frame
@@ -214,5 +236,9 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             winConditionText.gameObject.SetActive(false);
         }
+    }
+    public void GoBack()
+    {
+        SceneManager.LoadScene("TitleScreen");
     }
 }

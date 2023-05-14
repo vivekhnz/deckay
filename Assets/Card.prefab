@@ -170,7 +170,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthText: {fileID: 2464230672058609906}
-  effect: 0
   onClickAction:
     m_PersistentCalls:
       m_Calls: []
@@ -182,7 +181,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d690bfc9d58276c46ab5bc9f8ca2fed5, type: 3}
   - {fileID: 21300000, guid: 13f2a860aed07da4db6f458bb6a397da, type: 3}
   - {fileID: 21300000, guid: 818f03360639d00458f1afa5ca8da0c4, type: 3}
-  - {fileID: 21300000, guid: 8c74e57ed261cff44836ef263243dd7d, type: 3}
   - {fileID: 21300000, guid: 75ff5020a62446145966a9f0433ef76c, type: 3}
   - {fileID: 21300000, guid: a8c6a066d0527454a91ee7403a61576f, type: 3}
   - {fileID: 21300000, guid: 32b82010c0f6db24695b2109b0bbcf5e, type: 3}
@@ -210,7 +208,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6ee69eb2f31cb474b80cef52e48ce2a2, type: 3}
   - {fileID: 21300000, guid: 424054bd24a05e34d9b29bf519050f6e, type: 3}
   - {fileID: 21300000, guid: e10c3dcf2fc17124a88dff34e237cd04, type: 3}
-  - {fileID: 21300000, guid: 9193a5784c1289f4997d1b4b8f6ace9b, type: 3}
   - {fileID: 21300000, guid: 7c9dbe9c5244e3f43944b07908f38208, type: 3}
   - {fileID: 21300000, guid: ae7fee639ff544e4988464b45e02faf6, type: 3}
   - {fileID: 21300000, guid: b587b9e08586abd448d630ded51cdb71, type: 3}
