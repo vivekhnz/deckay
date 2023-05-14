@@ -215,7 +215,7 @@ internal class CardGame
                 var card = actor.CardsInHand[i];
                 if (card.DestroyEffect != CardDestroyEffect.None)
                 {
-                    Debug.LogWarning($"Card in hand does not have a destroy effect!");
+                    Debug.LogWarning($"Card in hand has a destroy effect! {card.DestroyEffect}");
                 }
                 if (card.Health <= 0)
                 {
