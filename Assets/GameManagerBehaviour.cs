@@ -110,6 +110,7 @@ public class GameManagerBehaviour : MonoBehaviour
 
     public void RestartGame()
     {
+        FindObjectOfType<AudioManager>().PlaySound("GameOver");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -193,12 +194,12 @@ public class GameManagerBehaviour : MonoBehaviour
             bool win = winner.Value == Actor.Player;
             winConditionText.text = $"You {(win ? "Win" : "Lose")}";
 
+            winConditionText.gameObject.SetActive(true);
+
             if (win)
                 FindObjectOfType<AudioManager>().PlaySound("YouWin");
             else
                 FindObjectOfType<AudioManager>().PlaySound("YouLose");
-
-            winConditionText.gameObject.SetActive(true);
 
             // todo: don't fire this every frame
             Invoke(nameof(RestartGame), 3.0f);
