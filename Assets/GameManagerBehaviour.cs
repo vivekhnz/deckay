@@ -54,14 +54,15 @@ public class GameManagerBehaviour : MonoBehaviour
         // update UI
         foreach (var card in cardsToDelete)
         {
-            var cardObj = cardObjByData[card];
-            if (card.DestroyEffect == CardDestroyEffect.Selected)
+            if (cardObjByData.ContainsKey(card))
             {
-                cardObj.AnimateSelect(DestroyCard);
+                Debug.Log($"Start destroy card {card.DisplayName} @ {card.Health}HP (effect = {card.DestroyEffect})");
+                var cardObj = cardObjByData[card];
+                cardObj.Animate(card.DestroyEffect, DestroyCard);
             }
             else
             {
-                DestroyCard(cardObj);
+                Debug.LogWarning($"Card missing from lookup: {card.DisplayName} @ {card.Health}HP (effect = {card.DestroyEffect})");
             }
         }
         foreach (var card in playerCardsToAdd)
@@ -164,6 +165,7 @@ public class GameManagerBehaviour : MonoBehaviour
 
     private void DestroyCard(CardBehaviour card)
     {
+        Debug.Log($"End destroy card {card.data.DisplayName} @ {card.data.Health}HP (effect = {card.data.DestroyEffect})");
         Destroy(card.gameObject);
         cardObjByData.Remove(card.data);
     }

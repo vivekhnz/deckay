@@ -38,8 +38,14 @@ public class CardBehaviour : MonoBehaviour
         infoImage.sprite = data.IsFaceDown ? backInfo : cardFrontTop;
     }
 
-    public void AnimateSelect(Action<CardBehaviour> onComplete)
+    public void Animate(CardDestroyEffect destroyEffect, Action<CardBehaviour> onComplete)
     {
+        if (destroyEffect == CardDestroyEffect.None)
+        {
+            onComplete(this);
+            return;
+        }
+
         /*
         rectTransform.DOBlendableLocalMoveBy(new Vector3(0, 20, 0), 0.3f);
         rectTransform.DOScale(new Vector3(1.1f, 1.1f, 0.3f), 0.3f);
@@ -47,7 +53,6 @@ public class CardBehaviour : MonoBehaviour
             .SetDelay(0.3f)
             .OnComplete(() => onComplete(this));
         */
-
         rectTransform.DOScale(new Vector3(0, 0, 1), 0.7f)
             .OnComplete(() => onComplete(this));
     }
