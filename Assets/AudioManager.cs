@@ -1,6 +1,7 @@
 using UnityEngine.Audio;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        PlaySound("MagicEscapeRoom");
+        PlaySound("ElectroMoonlight");
     }
 
     public void PlaySound(string name)
