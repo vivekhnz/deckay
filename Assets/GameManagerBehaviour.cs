@@ -54,8 +54,15 @@ public class GameManagerBehaviour : MonoBehaviour
         // update UI
         foreach (var card in cardsToDelete)
         {
-            Destroy(cardObjByData[card].gameObject);
-            cardObjByData.Remove(card);
+            var cardObj = cardObjByData[card];
+            if (card.DestroyEffect == CardDestroyEffect.Selected)
+            {
+                cardObj.AnimateSelect(DestroyCard);
+            }
+            else
+            {
+                DestroyCard(cardObj);
+            }
         }
         foreach (var card in playerCardsToAdd)
         {
@@ -153,6 +160,12 @@ public class GameManagerBehaviour : MonoBehaviour
         var card = cardObj.GetComponent<CardBehaviour>();
         card.data = cardData;
         cardObjByData[cardData] = card;
+    }
+
+    private void DestroyCard(CardBehaviour card)
+    {
+        Destroy(card.gameObject);
+        cardObjByData.Remove(card.data);
     }
 
     // Update is called once per frame
