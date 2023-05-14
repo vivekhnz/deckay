@@ -18,6 +18,8 @@ public class GameManagerBehaviour : MonoBehaviour
     public Image loseImage;
     public Image executeBackground;
     public Image iconImage;
+    public Image playerTurn;
+    public Image aiTurn;
     public CardBehaviour executingCard;
     public Sprite[] icons;
 
@@ -80,18 +82,21 @@ public class GameManagerBehaviour : MonoBehaviour
             CreateOpponentCardObject(card);
         }
 
-        currentPhaseText.text = $"Current phase: {game.CurrentPhase}";
+        //currentPhaseText.text = $"Current phase: {game.CurrentPhase}";
         switch (game.CurrentPhase)
         {
             case GamePhase.Dealing:
                 // todo: start deal animation
                 winImage.gameObject.SetActive(false);
                 loseImage.gameObject.SetActive(false);
+                aiTurn.gameObject.SetActive(false);
                 Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
             case GamePhase.PlayerChoose:
                 // allow player to choose a card from their hand
+                playerTurn.gameObject.SetActive(true);
+                aiTurn.gameObject.SetActive(false);
                 break;
 
             case GamePhase.PlayerExecute:
@@ -110,6 +115,8 @@ public class GameManagerBehaviour : MonoBehaviour
                 break;
 
             case GamePhase.AiChoose:
+                playerTurn.gameObject.SetActive(false);
+                aiTurn.gameObject.SetActive(true);
                 Invoke(nameof(MoveToNextPhase), 2.0f);
                 break;
 
