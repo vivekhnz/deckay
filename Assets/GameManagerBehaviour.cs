@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System;
 
 public class GameManagerBehaviour : MonoBehaviour
 {
@@ -25,11 +26,15 @@ public class GameManagerBehaviour : MonoBehaviour
     void Start()
     {
         game = new CardGame();
-
         MoveToNextPhase();
     }
 
-    public void MoveToNextPhase()
+    private void MoveToNextPhase()
+    {
+        UpdateGameScene(game => game.MoveToNextPhase());
+    }
+
+    private void UpdateGameScene(Action<CardGame> updateSim)
     {
         // shallow-copy cards before game logic executes
         // we'll diff afterwards and update the UI accordingly
@@ -37,7 +42,7 @@ public class GameManagerBehaviour : MonoBehaviour
         var opponentCardsBefore = new List<CardData>(game.Opponent.CardsInHand);
 
         // update game simulation
-        game.MoveToNextPhase();
+        updateSim(game);
 
         // diff cards to determine what UI updates to make
         var playerCardsToAdd = game.Player.CardsInHand.Where(card => !playerCardsBefore.Contains(card)).ToList();
@@ -119,9 +124,11 @@ public class GameManagerBehaviour : MonoBehaviour
     {
         Debug.Assert(game.CurrentPhase == GamePhase.PlayerChoose);
 
-        game.ChooseCard(Actor.Player, card.data);
-        Destroy(card.gameObject);
-        MoveToNextPhase();
+        UpdateGameScene(game =>
+        {
+            game.ChooseCard(Actor.Player, card.data);
+            game.MoveToNextPhase();
+        });
     }
 
     private void CreatePlayerCardObject(CardData cardData)

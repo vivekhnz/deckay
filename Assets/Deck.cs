@@ -4,7 +4,7 @@ using Random = System.Random;
 public enum CardAction
 {
     /// <summary>Your opponent must take two turns.</summary>
-    DoubleTurn = 0,
+    DoubleTurn,
     /// <summary>Your opponent must discard 1 card from their hand.</summary>
     Discard,
     /// <summary>One random card from your hand is hidden from view.</summary>
@@ -27,6 +27,14 @@ public enum CardAction
     Refurbish
 }
 
+public enum CardDestroyEffect
+{
+    None,
+    Perished,
+    Selected,
+    Discarded,
+    Stolen
+}
 
 public class CardData
 {
@@ -36,6 +44,8 @@ public class CardData
     public string DisplayName;
     public bool IsFaceDown;
     public bool IsWildcard;
+
+    public CardDestroyEffect DestroyEffect;
 }
 
 internal class Deck
