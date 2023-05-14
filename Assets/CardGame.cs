@@ -315,13 +315,6 @@ internal class CardGame
                     opponent.CardsInHand.Remove(targetCard);
                 }
                 break;
-            case CardAction.ExtraTurn:
-                {
-                    gameFlowModifiers.Add(me.Actor == Actor.Player
-                        ? GameFlowModifier.Player_TakesExtraTurn
-                        : GameFlowModifier.Opponent_TakesExtraTurn);
-                }
-                break;
             case CardAction.Blind:
                 {
                     var targetCard = RandomCard(opponent.CardsInHand);

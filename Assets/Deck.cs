@@ -8,8 +8,6 @@ public enum CardAction
     DoubleTurn = 0,
     /// <summary>Your opponent must discard 1 card from their hand.</summary>
     Discard,
-    /// <summary>You must take an extra turn.</summary>
-    ExtraTurn,
     /// <summary>One random card from your hand is hidden from view.</summary>
     Blind,
     /// <summary>Steal 1 random card from your opponent's hand.</summary>
@@ -68,7 +66,7 @@ internal class Deck
         cardList = new List<CardData>();
 
         // adding 2 of each
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 5; i++)
         {
             cardList.Add( new CardData { Effect = CardAction.Refurbish, Health = 2});
         }
@@ -76,7 +74,6 @@ internal class Deck
         // adding 3 of each
         for (int i = 0; i < 3; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.ExtraTurn, Health = 5 });
             cardList.Add(new CardData { Effect = CardAction.Blind, Health = 4 });
         }
 
