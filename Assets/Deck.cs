@@ -11,8 +11,6 @@ public enum CardAction
     Blind,
     /// <summary>Steal 1 random card from your opponent's hand.</summary>
     Steal,
-    /// <summary>You lose 1 life from each of the cards in your hand.</summary>
-    LifeDrain,
     /// <summary>Take 2 life from one of your opponent's cards.</summary>
     Aggro,
     /// <summary>Your opponent loses 1 life from each of the cards in their hand.</summary>
@@ -83,10 +81,9 @@ internal class Deck
         }
 
         // adding 4 of each
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             cardList.Add(new CardData { Effect = CardAction.DoubleTurn, Health = 5, Description = CardDescriptions(CardAction.DoubleTurn), DisplayName = "Fever" });
-            cardList.Add(new CardData { Effect = CardAction.LifeDrain, Health = 3, Description = CardDescriptions(CardAction.LifeDrain), DisplayName = "Curse" });
             cardList.Add(new CardData { Effect = CardAction.Draw, Health = 6, Description = CardDescriptions(CardAction.Draw), DisplayName = "Bloom" });
             cardList.Add(new CardData { Effect = CardAction.LifeSteal, Health = 3, Description = CardDescriptions(CardAction.LifeSteal), DisplayName = "Leech" });
             cardList.Add(new CardData { Effect = CardAction.Skip, Health = 3, Description = CardDescriptions(CardAction.Skip), DisplayName = "Stasis" });
@@ -144,8 +141,6 @@ internal class Deck
                 return "One random card from the opponents hand is hidden from view";
             case CardAction.Steal:
                 return "One card from your opponent's hand decays and restores one card in your hand.";
-            case CardAction.LifeDrain:
-                return "Two random cards are selected and decay twice.";
             case CardAction.Aggro:
                 return "One of your opponent's cards decays twice";
             case CardAction.TakeLifeForce:

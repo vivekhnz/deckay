@@ -333,14 +333,6 @@ internal class CardGame
                     targetCard.IsFaceDown = me.Actor == Actor.Player ? false : true;
                 }
                 break;
-            case CardAction.LifeDrain:
-                {
-                    foreach (var cardInHand in me.CardsInHand)
-                    {
-                        cardInHand.Health--;
-                    }
-                }
-                break;
             case CardAction.Aggro:
                 {
                     var targetCard = RandomCard(opponent.CardsInHand);
