@@ -14,7 +14,10 @@ public enum GamePhase
     AiChoose,
     AiExecute,
     AiDecay,
-    AiPickUp
+    AiPickUp,
+
+    GameWon,
+    GameLost,
 }
 
 public enum GameFlowModifier
@@ -208,7 +211,15 @@ internal class CardGame
             }
         }
 
-        // todo: evaluate win condition
+        // evaluate win condition
+        if (Player.CardsInHand.Count == 0)
+        {
+            CurrentPhase = GamePhase.GameLost;
+        }
+        else if (Opponent.CardsInHand.Count == 0)
+        {
+            CurrentPhase = GamePhase.GameWon;
+        }
     }
 
     internal void DealCards(int cardsPerHand)
@@ -329,6 +340,8 @@ internal class CardGame
                     var targetCard = RandomCard(opponent.CardsInHand);
                     RemoveFromHand(opponent, targetCard, CardDestroyEffect.Stolen);
                     me.CardsInHand.Add(targetCard);
+                    // HACK: Add one health to the stolen card so it doesn't immediately perish
+                    targetCard.Health++;
 
                     targetCard.IsFaceDown = me.Actor == Actor.Player ? false : true;
                 }

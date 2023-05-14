@@ -24,11 +24,14 @@ public class GameManagerBehaviour : MonoBehaviour
     private CardGame game;
 
     private Dictionary<CardData, CardBehaviour> cardObjByData = new Dictionary<CardData, CardBehaviour>();
+    private AudioManager audioManager;
 
     // Start is called before the first frame update
     void Start()
     {
         game = new CardGame();
+        audioManager = FindObjectOfType<AudioManager>();
+
         MoveToNextPhase();
     }
 
@@ -82,6 +85,8 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             case GamePhase.Dealing:
                 // todo: start deal animation
+                winImage.gameObject.SetActive(false);
+                loseImage.gameObject.SetActive(false);
                 Invoke(nameof(MoveToNextPhase), 1.0f);
                 break;
 
@@ -121,6 +126,18 @@ public class GameManagerBehaviour : MonoBehaviour
             case GamePhase.AiPickUp:
                 // todo: start pickup animation
                 Invoke(nameof(MoveToNextPhase), 1.0f);
+                break;
+
+            case GamePhase.GameWon:
+                winImage.gameObject.SetActive(true);
+                audioManager.PlaySound("YouWin");
+                Invoke(nameof(RestartGame), 3.0f);
+                break;
+
+            case GamePhase.GameLost:
+                loseImage.gameObject.SetActive(true);
+                audioManager.PlaySound("YouLose");
+                Invoke(nameof(RestartGame), 3.0f);
                 break;
         }
     }
@@ -204,41 +221,6 @@ public class GameManagerBehaviour : MonoBehaviour
             executingNameText.gameObject.SetActive(false);
             executingDescriptionText.gameObject.SetActive(false);
             executeBackground.gameObject.SetActive(false);
-        }
-
-        Actor? winner = null;
-        if (phase != GamePhase.Dealing)
-        {
-            if (game.Opponent.CardsInHand.Count == 0)
-            {
-                winner = Actor.Player;
-            }
-            else if (game.Player.CardsInHand.Count == 0)
-            {
-                winner = Actor.Opponent;
-            }
-        }
-        if (winner.HasValue)
-        {
-            bool win = winner.Value == Actor.Player;
-            if (win)
-            {
-                winImage.gameObject.SetActive(true);
-                FindObjectOfType<AudioManager>().PlaySound("YouWin");
-            }
-            else
-            {
-                loseImage.gameObject.SetActive(true);
-                FindObjectOfType<AudioManager>().PlaySound("YouLose");
-            }
-
-            // todo: don't fire this every frame
-            Invoke(nameof(RestartGame), 3.0f);
-        }
-        else
-        {
-            winImage.gameObject.SetActive(false);
-            loseImage.gameObject.SetActive(false);
         }
     }
     public void GoBack()
