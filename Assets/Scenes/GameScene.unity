@@ -1071,7 +1071,7 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: Statis
+  - name: Stasis
     clip: {fileID: 8300000, guid: fc68153d90fdff644a7d00e2b71b8c3f, type: 3}
     volume: 1
     pitch: 1
