@@ -20,8 +20,6 @@ public class CardBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //frontImage = GetComponentInChildren<Image>();
-        //backImage = transform.GetChild(0).GetComponent<Image>();
     }
 
     private void Awake()
