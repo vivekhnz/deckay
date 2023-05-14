@@ -14,7 +14,8 @@ public class GameManagerBehaviour : MonoBehaviour
     public Text currentPhaseText;
     public Text executingNameText;
     public Text executingDescriptionText;
-    public Text winConditionText;
+    public Image winImage;
+    public Image loseImage;
     public Image executeBackground;
     public Image iconImage;
     public CardBehaviour executingCard;
@@ -220,21 +221,24 @@ public class GameManagerBehaviour : MonoBehaviour
         if (winner.HasValue)
         {
             bool win = winner.Value == Actor.Player;
-            winConditionText.text = $"You {(win ? "Win" : "Lose")}";
-
-            winConditionText.gameObject.SetActive(true);
-
             if (win)
+            {
+                winImage.gameObject.SetActive(true);
                 FindObjectOfType<AudioManager>().PlaySound("YouWin");
+            }
             else
+            {
+                loseImage.gameObject.SetActive(true);
                 FindObjectOfType<AudioManager>().PlaySound("YouLose");
+            }
 
             // todo: don't fire this every frame
             Invoke(nameof(RestartGame), 3.0f);
         }
         else
         {
-            winConditionText.gameObject.SetActive(false);
+            winImage.gameObject.SetActive(false);
+            loseImage.gameObject.SetActive(false);
         }
     }
     public void GoBack()
