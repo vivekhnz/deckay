@@ -1160,12 +1160,6 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: MagicEscapeRoom
-    clip: {fileID: 8300000, guid: b57b6c857ae385046b7e1199a57f6779, type: 3}
-    volume: 0.064
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
   - name: ElectroMoonlight
     clip: {fileID: 8300000, guid: ac8a0519d5b3a834c84012439354506b, type: 3}
     volume: 0.064
