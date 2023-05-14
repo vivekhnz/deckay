@@ -207,13 +207,13 @@ public class GameManagerBehaviour : MonoBehaviour
             if (phase == GamePhase.PlayerExecute)
             {
                 executingNameText.text = executingCard.data.DisplayName;
-                executingDescriptionText.text = $"You played:\n\n{executingCard.data.Description}";
+                executingDescriptionText.text = executingCard.data.Description;
                 executingCard.data = game.Player.SelectedCard;
             }
             else
             {
                 executingNameText.text = executingCard.data.DisplayName;
-                executingDescriptionText.text = $"Opponent played:\n\n{executingCard.data.Description}";
+                executingDescriptionText.text = executingCard.data.Description;
                 executingCard.data = game.Opponent.SelectedCard;
             }
 
