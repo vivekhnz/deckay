@@ -33,6 +33,8 @@ public class CardData
 {
     public int Health;
     public CardAction Effect;
+    public string Description;
+    public string DisplayName;
     public bool IsFaceDown;
     public bool IsWildcard;
 }
@@ -65,35 +67,30 @@ internal class Deck
     {
         cardList = new List<CardData>();
 
-        // adding 2 of each
-        for(int i = 0; i < 5; i++)
-        {
-            cardList.Add( new CardData { Effect = CardAction.Refurbish, Health = 2});
-        }
-
         // adding 3 of each
         for (int i = 0; i < 3; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.Blind, Health = 4 });
+            cardList.Add(new CardData { Effect = CardAction.Blind, Health = 4, Description = CardDescriptions(CardAction.Blind), DisplayName = "Blind" });
         }
 
         // adding 4 of each
         for (int i = 0; i < 4; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.DoubleTurn, Health = 5 });
-            cardList.Add(new CardData { Effect = CardAction.LifeDrain, Health = 3 });
-            cardList.Add(new CardData { Effect = CardAction.Draw, Health = 6 });
-            cardList.Add(new CardData { Effect = CardAction.LifeSteal, Health = 3 });
-            cardList.Add(new CardData { Effect = CardAction.Skip, Health = 3 });
+            cardList.Add(new CardData { Effect = CardAction.DoubleTurn, Health = 5, Description = CardDescriptions(CardAction.DoubleTurn), DisplayName = "Fever" });
+            cardList.Add(new CardData { Effect = CardAction.LifeDrain, Health = 3, Description = CardDescriptions(CardAction.LifeDrain), DisplayName = "Curse" });
+            cardList.Add(new CardData { Effect = CardAction.Draw, Health = 6, Description = CardDescriptions(CardAction.Draw), DisplayName = "Bloom" });
+            cardList.Add(new CardData { Effect = CardAction.LifeSteal, Health = 3, Description = CardDescriptions(CardAction.LifeSteal), DisplayName = "Leech" });
+            cardList.Add(new CardData { Effect = CardAction.Skip, Health = 3, Description = CardDescriptions(CardAction.Skip), DisplayName = "Stasis" });
         }
 
         // adding 5 of each
         for (int i = 0; i < 5; i++)
         {
-            cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = 4 });
-            cardList.Add(new CardData { Effect = CardAction.Aggro, Health = 3 });
-            cardList.Add(new CardData { Effect = CardAction.Steal, Health = 2 });
-            cardList.Add(new CardData { Effect = CardAction.Discard, Health = 4 });
+            cardList.Add(new CardData { Effect = CardAction.Refurbish, Health = 2, Description = CardDescriptions(CardAction.Refurbish), DisplayName = "Restore" });
+            cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = 4, Description = CardDescriptions(CardAction.TakeLifeForce), DisplayName = "Rot" });
+            cardList.Add(new CardData { Effect = CardAction.Aggro, Health = 3, Description = CardDescriptions(CardAction.Aggro), DisplayName = "Plague" });
+            cardList.Add(new CardData { Effect = CardAction.Steal, Health = 2, Description = CardDescriptions(CardAction.Steal), DisplayName = "Pickpocket" });
+            cardList.Add(new CardData { Effect = CardAction.Discard, Health = 4, Description = CardDescriptions(CardAction.Discard), DisplayName = "Necrosis" });
         }
 
         // mark a certain no. of cards as wildcards
@@ -124,6 +121,40 @@ internal class Deck
         }
         topOfDeck++;
         return cardList[topOfDeck - 1];
+    }
+
+    public string CardDescriptions(CardAction actionName)
+    {
+        switch (actionName)
+        {
+            case CardAction.DoubleTurn:
+                return "Your opponent must play two cards.";
+            case CardAction.Discard:
+                return "Your opponent must discard one card from their hand";
+            case CardAction.ExtraTurn:
+                return "You must take an extra turn";
+            case CardAction.Blind:
+                return "One random card from the opponents hand is hidden from view";
+            case CardAction.Steal:
+                return "One card from your opponent's hand decays and restores one card in your hand.";
+            case CardAction.LifeDrain:
+                return "Two random cards are selected and decay twice.";
+            case CardAction.Aggro:
+                return "One of your opponent's cards decays twice";
+            case CardAction.TakeLifeForce:
+                return "Your opponent's hand decays.";
+            case CardAction.Draw:
+                return "You must draw an extra card at the end of your turn";
+            case CardAction.LifeSteal:
+                return "Take 1 life from your opponent's card and add it to one of your own.";
+            case CardAction.Skip:
+                return "Cards in your hand do not decay this turn.";
+            case CardAction.Refurbish:
+                return "One card in your hand is restored.";
+            default:
+                return "invalid action name";
+
+        }
     }
 }
 
