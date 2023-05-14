@@ -19,8 +19,8 @@ public enum GamePhase
 
 public enum GameFlowModifier
 {
-    Player_TakesExtraTurn,
-    Opponent_TakesExtraTurn,
+    Player_PlayExtraCard,
+    Opponent_PlayExtraCard,
 
     Player_SkipDecay,
     Opponent_SkipDecay,
@@ -103,13 +103,13 @@ internal class CardGame
             case GamePhase.PlayerExecute:
                 if (UseFlowModifierIfActive(GameFlowModifier.Player_SkipDecay))
                 {
-                    return GamePhase.PlayerPickUp;
+                    return GetNextPhase(GamePhase.PlayerDecay);
                 }
                 return GamePhase.PlayerDecay;
             case GamePhase.PlayerDecay:
                 return GamePhase.PlayerPickUp;
             case GamePhase.PlayerPickUp:
-                if (UseFlowModifierIfActive(GameFlowModifier.Player_TakesExtraTurn))
+                if (UseFlowModifierIfActive(GameFlowModifier.Player_PlayExtraCard))
                 {
                     return GamePhase.PlayerChoose;
                 }
@@ -120,13 +120,13 @@ internal class CardGame
             case GamePhase.AiExecute:
                 if (UseFlowModifierIfActive(GameFlowModifier.Opponent_SkipDecay))
                 {
-                    return GamePhase.AiPickUp;
+                    return GetNextPhase(GamePhase.AiDecay);
                 }
                 return GamePhase.AiDecay;
             case GamePhase.AiDecay:
                 return GamePhase.AiPickUp;
             case GamePhase.AiPickUp:
-                if (UseFlowModifierIfActive(GameFlowModifier.Opponent_TakesExtraTurn))
+                if (UseFlowModifierIfActive(GameFlowModifier.Opponent_PlayExtraCard))
                 {
                     return GamePhase.AiChoose;
                 }
@@ -305,8 +305,8 @@ internal class CardGame
             case CardAction.DoubleTurn:
                 {
                     gameFlowModifiers.Add(opponent.Actor == Actor.Player
-                        ? GameFlowModifier.Player_TakesExtraTurn
-                        : GameFlowModifier.Opponent_TakesExtraTurn);
+                        ? GameFlowModifier.Player_PlayExtraCard
+                        : GameFlowModifier.Opponent_PlayExtraCard);
                 }
                 break;
             case CardAction.Discard:
