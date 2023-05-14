@@ -193,7 +193,7 @@ internal class CardGame
                 break;
         }
 
-        // remove expired cards
+        // remove perished cards
         var actors = new[] { Player, Opponent };
         foreach (var actor in actors)
         {
@@ -202,11 +202,13 @@ internal class CardGame
                 var card = actor.CardsInHand[i];
                 if (card.Health <= 0)
                 {
-                    actor.CardsInHand.RemoveAt(i);
+                    RemoveFromHand(actor, card, CardDestroyEffect.Perished);
                     i--;
                 }
             }
         }
+
+        // todo: evaluate win condition
     }
 
     internal void DealCards(int cardsPerHand)
@@ -253,7 +255,7 @@ internal class CardGame
         Debug.Assert(actorState.CardsInHand.Contains(card));
 
         actorState.SelectedCard = card;
-        actorState.CardsInHand.Remove(card);
+        RemoveFromHand(actorState, card, CardDestroyEffect.Selected);
     }
 
     internal void DecayCards(Actor actor)
@@ -313,7 +315,7 @@ internal class CardGame
             case CardAction.Discard:
                 {
                     var targetCard = RandomCard(opponent.CardsInHand);
-                    opponent.CardsInHand.Remove(targetCard);
+                    RemoveFromHand(opponent, targetCard, CardDestroyEffect.Discarded);
                 }
                 break;
             case CardAction.Blind:
@@ -325,7 +327,7 @@ internal class CardGame
             case CardAction.Steal:
                 {
                     var targetCard = RandomCard(opponent.CardsInHand);
-                    opponent.CardsInHand.Remove(targetCard);
+                    RemoveFromHand(opponent, targetCard, CardDestroyEffect.Stolen);
                     me.CardsInHand.Add(targetCard);
 
                     targetCard.IsFaceDown = me.Actor == Actor.Player ? false : true;
@@ -400,5 +402,11 @@ internal class CardGame
     private CardData RandomCard(List<CardData> choices)
     {
         return choices[rng.Next(0, choices.Count)];
+    }
+
+    private void RemoveFromHand(ActorState actor, CardData card, CardDestroyEffect effect)
+    {
+        card.DestroyEffect = effect;
+        actor.CardsInHand.Remove(card);
     }
 }
