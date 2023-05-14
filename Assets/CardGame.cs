@@ -69,9 +69,9 @@ internal class CardGame
     public ActorState Opponent;
 
     public CardGame()
-	{
+    {
         rng = new Random();
-        
+
         deck = new Deck();
 
         gameFlowModifiers = new List<GameFlowModifier>();
@@ -151,7 +151,12 @@ internal class CardGame
                 break;
 
             case GamePhase.PlayerChoose:
-                // allow player to choose a card from their hand
+                // if the player is down to their last card, they can't win
+                // zero out the card health so it perishes
+                if (Player.CardsInHand.Count == 1)
+                {
+                    Player.CardsInHand[0].Health = 0;
+                }
                 break;
 
             case GamePhase.PlayerExecute:
@@ -171,7 +176,12 @@ internal class CardGame
                 break;
 
             case GamePhase.AiChoose:
-                // pretend that AI is picking a card
+                // if the AI is down to their last card, they can't win
+                // zero out the card health so it perishes
+                if (Opponent.CardsInHand.Count == 1)
+                {
+                    Opponent.CardsInHand[0].Health = 0;
+                }
                 break;
 
             case GamePhase.AiExecute:
@@ -203,8 +213,14 @@ internal class CardGame
             for (int i = 0; i < actor.CardsInHand.Count; i++)
             {
                 var card = actor.CardsInHand[i];
+                if (card.DestroyEffect != CardDestroyEffect.None)
+                {
+                    Debug.LogWarning($"Card in hand does not have a destroy effect!");
+                }
                 if (card.Health <= 0)
                 {
+                    Debug.Log($"Card perished: {card.DisplayName} @ {card.Health}HP");
+
                     RemoveFromHand(actor, card, CardDestroyEffect.Perished);
                     i--;
                 }
@@ -300,7 +316,7 @@ internal class CardGame
         var executingCard = me.SelectedCard;
         executingCard.IsFaceDown = false;
         executingCard.IsWildcard = false;
-        
+
         var modifiers = ExecuteCard(executingCard, me, opponent);
         foreach (var modifier in modifiers)
         {
