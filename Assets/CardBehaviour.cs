@@ -16,12 +16,16 @@ public class CardBehaviour : MonoBehaviour
     public Sprite[] decayingBack;
     public Image baseImage;
     public Image infoImage;
+    private int decayIndex;
+    private int maxHealth;
 
     private RectTransform rectTransform;
 
     // Start is called before the first frame update
     void Start()
     {
+        decayIndex = decayingBack.Length - 1;
+        maxHealth = data.Health;
         rectTransform = GetComponent<RectTransform>();
         rectTransform.localScale = new Vector3(0, 0, 1);
         rectTransform.DOScale(new Vector3(1, 1, 1), 0.7f);
@@ -32,7 +36,14 @@ public class CardBehaviour : MonoBehaviour
     {
         healthText.text = data.Health.ToString();
         var cardFrontTop = data.IsWildcard ? cardWildcard : cardInfo[(int)data.Effect];
-        int decayIndex = System.Math.Min(data.Health, decayingBack.Length - 1);
+        if(data.Health == (int)(maxHealth / 2) && data.Health != 1)
+        {
+            decayIndex = 1;
+        }
+        else if(data.Health == 1)
+        {
+            decayIndex = 0;
+        }
         baseImage.sprite = data.IsFaceDown ? decayingBack[decayIndex] : decayingFront[decayIndex];
         infoImage.sprite = data.IsFaceDown ? backInfo : cardFrontTop;
     }
