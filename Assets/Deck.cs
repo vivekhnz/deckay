@@ -136,23 +136,23 @@ internal class Deck
             case CardAction.DoubleTurn:
                 return "Your opponent must play two cards.";
             case CardAction.Discard:
-                return "Your opponent must discard one card from their hand";
+                return "One random card from your opponent’s hand perishes.";
             case CardAction.Blind:
-                return "One random card from the opponents hand is hidden from view";
+                return "One random card from your opponent’s hand is flipped.";
             case CardAction.Steal:
-                return "One card from your opponent's hand decays and restores one card in your hand.";
+                return "Steal one random card from your opponent's hand.";
             case CardAction.Aggro:
-                return "One of your opponent's cards decays twice";
+                return "One random card from your opponent’s hand decays twice.";
             case CardAction.TakeLifeForce:
-                return "Your opponent's hand decays.";
+                return "One random card from your opponent’s hand decays.";
             case CardAction.Draw:
-                return "You must draw an extra card at the end of your turn";
+                return "Gain an additional card at the end of your turn.";
             case CardAction.LifeSteal:
-                return "Take 1 life from your opponent's card and add it to one of your own.";
+                return "One random card from your opponent’s hand decays, syphoning life into one random card in your hand.";
             case CardAction.Skip:
-                return "Cards in your hand do not decay this turn.";
+                return "Cards in your hand will not decay this turn.";
             case CardAction.Refurbish:
-                return "One card in your hand is restored.";
+                return "One random card in your hand partially recovers from decay.";
             default:
                 return "invalid action name";
 
