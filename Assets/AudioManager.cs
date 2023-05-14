@@ -34,7 +34,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        PlaySound("MagicEscapeRoom");
+        PlaySound("ElectroMoonlight");
     }
 
     public void PlaySound(string name)
