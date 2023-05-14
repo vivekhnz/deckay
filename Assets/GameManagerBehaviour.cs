@@ -187,6 +187,12 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             bool win = winner.Value == Actor.Player;
             winConditionText.text = $"You {(win ? "Win" : "Lose")}";
+
+            if (win)
+                FindObjectOfType<AudioManager>().PlaySound("YouWin");
+            else
+                FindObjectOfType<AudioManager>().PlaySound("YouLose");
+
             winConditionText.gameObject.SetActive(true);
 
             // todo: don't fire this every frame
