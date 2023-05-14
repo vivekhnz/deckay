@@ -11,7 +11,8 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform playerHandPanel;
     public Transform opponentHandPanel;
     public Text currentPhaseText;
-    public Text executingPlayerText;
+    public Text executingNameText;
+    public Text executingDescriptionText;
     public Text winConditionText;
     public CardBehaviour executingCard;
 
@@ -153,21 +154,25 @@ public class GameManagerBehaviour : MonoBehaviour
         {
             if (phase == GamePhase.PlayerExecute)
             {
-                executingPlayerText.text = "You played";
+                executingNameText.text = executingCard.data.DisplayName;
+                executingDescriptionText.text = executingCard.data.Description;
                 executingCard.data = game.Player.SelectedCard;
             }
             else
             {
-                executingPlayerText.text = "Opponent played";
+                executingNameText.text = executingCard.data.DisplayName;
+                executingDescriptionText.text = executingCard.data.Description;
                 executingCard.data = game.Opponent.SelectedCard;
             }
 
-            executingPlayerText.gameObject.SetActive(true);
+            executingNameText.gameObject.SetActive(true);
+            executingDescriptionText.gameObject.SetActive(true);
             executingCard.gameObject.SetActive(true);
         }
         else
         {
-            executingPlayerText.gameObject.SetActive(false);
+            executingNameText.gameObject.SetActive(false);
+            executingDescriptionText.gameObject.SetActive(false);
             executingCard.gameObject.SetActive(false);
         }
 
