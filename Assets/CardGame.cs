@@ -351,17 +351,6 @@ internal class CardGame
                     targetCard.IsFaceDown = !targetCard.IsFaceDown;
                 }
                 break;
-            case CardAction.Steal:
-                {
-                    var targetCard = RandomCard(opponent.CardsInHand);
-                    RemoveFromHand(opponent, targetCard, CardDestroyEffect.Stolen);
-                    me.CardsInHand.Add(targetCard);
-                    // HACK: Add one health to the stolen card so it doesn't immediately perish
-                    targetCard.Health++;
-
-                    targetCard.IsFaceDown = me.Actor == Actor.Player ? false : true;
-                }
-                break;
             case CardAction.Aggro:
                 {
                     var targetCard = RandomCard(opponent.CardsInHand);

@@ -9,8 +9,6 @@ public enum CardAction
     Discard,
     /// <summary>One random card from your hand is hidden from view.</summary>
     Blind,
-    /// <summary>Steal 1 random card from your opponent's hand.</summary>
-    Steal,
     /// <summary>Take 2 life from one of your opponent's cards.</summary>
     Aggro,
     /// <summary>Your opponent loses 1 life from each of the cards in their hand.</summary>
@@ -30,8 +28,7 @@ public enum CardDestroyEffect
     None,
     Perished,
     Selected,
-    Discarded,
-    Stolen
+    Discarded
 }
 
 public class CardData
@@ -95,7 +92,6 @@ internal class Deck
             cardList.Add(new CardData { Effect = CardAction.Refurbish, Health = 2, Description = CardDescriptions(CardAction.Refurbish), DisplayName = "Restore" });
             cardList.Add(new CardData { Effect = CardAction.TakeLifeForce, Health = 4, Description = CardDescriptions(CardAction.TakeLifeForce), DisplayName = "Rot" });
             cardList.Add(new CardData { Effect = CardAction.Aggro, Health = 3, Description = CardDescriptions(CardAction.Aggro), DisplayName = "Plague" });
-            cardList.Add(new CardData { Effect = CardAction.Steal, Health = 2, Description = CardDescriptions(CardAction.Steal), DisplayName = "Pickpocket" });
             cardList.Add(new CardData { Effect = CardAction.Discard, Health = 4, Description = CardDescriptions(CardAction.Discard), DisplayName = "Necrosis" });
         }
 
@@ -139,8 +135,6 @@ internal class Deck
                 return "One random card from your opponent’s hand perishes.";
             case CardAction.Blind:
                 return "One random card from your opponent’s hand is flipped.";
-            case CardAction.Steal:
-                return "Steal one random card from your opponent's hand.";
             case CardAction.Aggro:
                 return "One random card from your opponent’s hand decays twice.";
             case CardAction.TakeLifeForce:
