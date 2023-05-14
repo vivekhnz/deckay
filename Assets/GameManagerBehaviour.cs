@@ -14,6 +14,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public Text executingNameText;
     public Text executingDescriptionText;
     public Text winConditionText;
+    public Image executeBackground;
     public CardBehaviour executingCard;
 
     private CardGame game;
@@ -168,12 +169,14 @@ public class GameManagerBehaviour : MonoBehaviour
 
             executingNameText.gameObject.SetActive(true);
             executingDescriptionText.gameObject.SetActive(true);
+            executeBackground.gameObject.SetActive(true);
             executingCard.gameObject.SetActive(true);
         }
         else
         {
             executingNameText.gameObject.SetActive(false);
             executingDescriptionText.gameObject.SetActive(false);
+            executeBackground.gameObject.SetActive(false);
             executingCard.gameObject.SetActive(false);
         }
 
