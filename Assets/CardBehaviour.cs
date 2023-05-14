@@ -8,18 +8,20 @@ public class CardBehaviour : MonoBehaviour
     public CardAction effect;
     public CardData data = new CardData();
     public UnityEvent onClickAction = new UnityEvent();
-    public Sprite cardFront;
-    public Sprite cardBack;
+    public Sprite backInfo;
     public Sprite cardWildcard;
     public Sprite[] cardInfo;
-    public Sprite[] decaying;
+    public Sprite[] decayingFront;
+    public Sprite[] decayingBack;
     public Sprite[] icons;
-    private Image image;
+    public Image baseImage;
+    public Image infoImage;
 
     // Start is called before the first frame update
     void Start()
     {
-        image = GetComponent<Image>();
+        //frontImage = GetComponentInChildren<Image>();
+        //backImage = transform.GetChild(0).GetComponent<Image>();
     }
 
     private void Awake()
@@ -31,14 +33,19 @@ public class CardBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         healthText.text = data.Health.ToString();
         effect = data.Effect;
-        cardFront = data.IsWildcard ? cardWildcard : cardInfo[(int)effect];
-        image.sprite = data.IsFaceDown ? cardBack : cardFront;
+        var cardFrontTop = data.IsWildcard ? cardWildcard : cardInfo[(int)effect];
+        int decayIndex = System.Math.Min(data.Health,decayingBack.Length-1);
+        baseImage.sprite = data.IsFaceDown ? decayingBack[decayIndex] : decayingFront[decayIndex] ;
+        infoImage.sprite = data. IsFaceDown ? backInfo : cardFrontTop;
+
     }
 
     public void onCardClicked()
     {
         onClickAction.Invoke();
     }
+
 }
