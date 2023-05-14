@@ -323,12 +323,6 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: MagicEscapeRoom
-    clip: {fileID: 8300000, guid: b57b6c857ae385046b7e1199a57f6779, type: 3}
-    volume: 0.064
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
   - name: ElectroMoonlight
     clip: {fileID: 8300000, guid: ac8a0519d5b3a834c84012439354506b, type: 3}
     volume: 0.064
@@ -476,7 +470,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 39f031a716cfb4a47ba01033345b5155, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 69a26f68e5737e74797f64de4c0dca81, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
