@@ -297,6 +297,7 @@ internal class CardGame
 
     private List<GameFlowModifier> ExecuteCard(CardData card, ActorState me, ActorState opponent)
     {
+        GameManagerBehaviour.FindObjectOfType<AudioManager>().PlaySound(card.DisplayName);
         var flowModifiers = new List<GameFlowModifier>();
 
         Debug.Log($"Executing card effect '{card.Effect}'");
