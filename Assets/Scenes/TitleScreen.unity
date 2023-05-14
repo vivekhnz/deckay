@@ -1489,9 +1489,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 780200864}
-        m_TargetAssemblyTypeName: TitleScreenLogic, Assembly-CSharp
-        m_MethodName: playGame
+      - m_Target: {fileID: 1281310287}
+        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
+        m_MethodName: Start
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
