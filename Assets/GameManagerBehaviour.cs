@@ -15,7 +15,9 @@ public class GameManagerBehaviour : MonoBehaviour
     public Text executingDescriptionText;
     public Text winConditionText;
     public Image executeBackground;
+    public Image iconImage;
     public CardBehaviour executingCard;
+    public Sprite[] icons;
 
     private CardGame game;
 
@@ -154,6 +156,7 @@ public class GameManagerBehaviour : MonoBehaviour
         GamePhase phase = game.CurrentPhase;
         if (phase == GamePhase.PlayerExecute || phase == GamePhase.AiExecute)
         {
+            iconImage.sprite = icons[(int)executingCard.data.Effect];
             if (phase == GamePhase.PlayerExecute)
             {
                 executingNameText.text = executingCard.data.DisplayName;
@@ -167,17 +170,17 @@ public class GameManagerBehaviour : MonoBehaviour
                 executingCard.data = game.Opponent.SelectedCard;
             }
 
+            iconImage.gameObject.SetActive(true);
             executingNameText.gameObject.SetActive(true);
             executingDescriptionText.gameObject.SetActive(true);
             executeBackground.gameObject.SetActive(true);
-            executingCard.gameObject.SetActive(true);
         }
         else
         {
+            iconImage.gameObject.SetActive(false);
             executingNameText.gameObject.SetActive(false);
             executingDescriptionText.gameObject.SetActive(false);
             executeBackground.gameObject.SetActive(false);
-            executingCard.gameObject.SetActive(false);
         }
 
         Actor? winner = null;

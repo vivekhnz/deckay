@@ -13,7 +13,6 @@ public class CardBehaviour : MonoBehaviour
     public Sprite[] cardInfo;
     public Sprite[] decayingFront;
     public Sprite[] decayingBack;
-    public Sprite[] icons;
     public Image baseImage;
     public Image infoImage;
 
@@ -40,7 +39,6 @@ public class CardBehaviour : MonoBehaviour
         int decayIndex = System.Math.Min(data.Health,decayingBack.Length-1);
         baseImage.sprite = data.IsFaceDown ? decayingBack[decayIndex] : decayingFront[decayIndex] ;
         infoImage.sprite = data. IsFaceDown ? backInfo : cardFrontTop;
-
     }
 
     public void onCardClicked()
