@@ -13,6 +13,7 @@ public class GameManagerBehaviour : MonoBehaviour
     public Transform opponentHandPanel;
     public Text currentPhaseText;
     public Text executingNameText;
+    public Text playedText;
     public Text executingDescriptionText;
     public Image winImage;
     public Image loseImage;
@@ -206,18 +207,22 @@ public class GameManagerBehaviour : MonoBehaviour
             iconImage.sprite = icons[(int)executingCard.data.Effect];
             if (phase == GamePhase.PlayerExecute)
             {
+                playedText.text = "You Played:";
                 executingNameText.text = executingCard.data.DisplayName;
                 executingDescriptionText.text = executingCard.data.Description;
                 executingCard.data = game.Player.SelectedCard;
             }
             else
             {
+                playedText.text = "Opponent Played:";
                 executingNameText.text = executingCard.data.DisplayName;
                 executingDescriptionText.text = executingCard.data.Description;
                 executingCard.data = game.Opponent.SelectedCard;
             }
 
+            
             iconImage.gameObject.SetActive(true);
+            playedText.gameObject.SetActive(true);
             executingNameText.gameObject.SetActive(true);
             executingDescriptionText.gameObject.SetActive(true);
             executeBackground.gameObject.SetActive(true);
@@ -225,6 +230,7 @@ public class GameManagerBehaviour : MonoBehaviour
         else
         {
             iconImage.gameObject.SetActive(false);
+            playedText.gameObject.SetActive(false);
             executingNameText.gameObject.SetActive(false);
             executingDescriptionText.gameObject.SetActive(false);
             executeBackground.gameObject.SetActive(false);
