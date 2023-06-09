@@ -21,9 +21,4 @@ public class TitleScreenLogic : MonoBehaviour
     {
         SceneManager.LoadScene("CreditsScene");
     }
-
-    public void exitGame()
-    {
-        Application.Quit();
-    }
 }
